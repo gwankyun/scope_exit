@@ -38,37 +38,37 @@ void bye()
 
 ON_SCOPE_EXIT([]()
 {
-	std::cout << "exit" << std::endl;
+    std::cout << "exit" << std::endl;
 });
 
 {
-	ON_SCOPE_EXIT(bye);
+    ON_SCOPE_EXIT(bye);
 }
 
 auto obj1 = new Object(1);
 auto obj2 = new Object(2);
 
 {
-	ON_SCOPE_EXIT(deleteObject, obj1);
+    ON_SCOPE_EXIT(deleteObject, obj1);
 }
 
 {
-	ON_SCOPE_EXIT(ScopeGuard::Delete, obj2);
+    ON_SCOPE_EXIT(ScopeGuard::Delete, obj2);
 }
 
 if (obj1 == NULL)
 {
-	std::cout << "obj1 NULL" << std::endl;
+    std::cout << "obj1 NULL" << std::endl;
 }
 
 if (obj2 == NULL)
 {
-	std::cout << "obj2 NULL" << std::endl;
+    std::cout << "obj2 NULL" << std::endl;
 }
 
 {
-	auto objArray = new Object[3];
-	ON_SCOPE_EXIT(ScopeGuard::DeleteArray, objArray);
+    auto objArray = new Object[3];
+    ON_SCOPE_EXIT(ScopeGuard::DeleteArray, objArray);
 }
 ```
 

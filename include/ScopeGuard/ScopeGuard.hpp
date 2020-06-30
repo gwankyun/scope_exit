@@ -7,6 +7,8 @@ class ScopeGuard
 {
 public:
 
+    enum Type { Delete = 0, DeleteArray };
+
 #ifdef __cpp_lambdas
     explicit ScopeGuard(std::function<void()> onExit_)
         : onExit(onExit_), dismissed(false), base(NULL)
@@ -14,15 +16,21 @@ public:
     }
 #endif // __cpp_lambdas
 
-    template<typename CallBack, typename T>
-    explicit ScopeGuard(CallBack callback_, T& value_)
-        : dismissed(false), base(new Derived<T, CallBack, void(*)()>(callback_, value_))
+    template<typename CB, typename T>
+    explicit ScopeGuard(CB callback_, T& value_)
+        : dismissed(false), base(new CallBack<CB, T>(callback_, value_))
     {
     }
 
-    template<typename Procedure>
-    explicit ScopeGuard(Procedure procedure_)
-        : dismissed(false), base(new Derived<int, void(*)(int), Procedure>(procedure_))
+    template<typename P>
+    explicit ScopeGuard(P procedure_)
+        : dismissed(false), base(new Procedure<P>(procedure_))
+    {
+    }
+
+    template<typename T>
+    explicit ScopeGuard(Type type, T*& value_)
+        : dismissed(false), base(new Ptr<T>(type, value_))
     {
     }
 
@@ -53,9 +61,8 @@ private:
     ScopeGuard(const ScopeGuard&);
     ScopeGuard& operator=(const ScopeGuard&);
 
-    class Base
+    struct Base
     {
-    public:
         Base()
         {
         }
@@ -63,42 +70,75 @@ private:
         virtual ~Base()
         {
         }
-
-    private:
-
     };
 
-    template<typename T, typename CallBack,typename Procedure>
-    class Derived : public Base
+    template<typename CB, typename T>
+    struct CallBack : public Base
     {
-    public:
-        Derived(CallBack callback_, T& value_) : value(&value_), callback(callback_), hasCallBack(true), hasProcedure(false)//, procedure(NULL)
+        CallBack(CB callback_, T& value_) : value(value_), callback(callback_), hasCallBack(true)
         {
         }
 
-        Derived(Procedure procedure_) : value(NULL), hasCallBack(false), hasProcedure(true), procedure(procedure_)//, procedure(NULL)
-        {
-        }
-
-        ~Derived()
+        ~CallBack()
         {
             if (hasCallBack)
             {
-                callback(*value);
+                callback(value);
             }
+        }
 
+        T& value;
+        CB callback;
+        bool hasCallBack;
+    };
+
+    template<typename P>
+    struct Procedure : public Base
+    {
+        Procedure(P procedure_) : procedure(procedure_), hasProcedure(true)
+        {
+        }
+
+        ~Procedure()
+        {
             if (hasProcedure)
             {
                 procedure();
             }
         }
 
-    private:
-        T* value;
-        CallBack callback;
-        bool hasCallBack;
-        Procedure procedure;
+        P procedure;
         bool hasProcedure;
+    };
+
+    template<typename T>
+    struct Ptr : public Base
+    {
+        Ptr(Type type_, T*& value_) : type(type_), value(value_)
+        {
+        }
+
+        ~Ptr()
+        {
+            if (value != NULL)
+            {
+                switch (type)
+                {
+                case ScopeGuard::Delete:
+                    delete value;
+                    break;
+                case ScopeGuard::DeleteArray:
+                    delete[] value;
+                    break;
+                default:
+                    break;
+                }
+                value = NULL;
+            }
+        }
+
+        T*& value;
+        Type type;
     };
 
 #ifdef __cpp_lambdas
@@ -110,5 +150,5 @@ private:
 
 #define SCOPE_GUARD_LINENAME_CAT(name, line) name##line
 #define SCOPE_GUARD_LINENAME(name, line) SCOPE_GUARD_LINENAME_CAT(name, line)
-#define ON_SCOPE_EXIT(...) ScopeGuard SCOPE_GUARD_LINENAME(name, __LINE__)(##__VA_ARGS__)
+#define ON_SCOPE_EXIT(...) ScopeGuard SCOPE_GUARD_LINENAME(ScopeGuard, __LINE__)(##__VA_ARGS__)
 #endif // !SCOPE_GUARD_HPP

@@ -6,13 +6,13 @@
 #pragma warning(disable: 26812)
 #endif // _MSC_VER
 
-#ifndef SCOPEGUARD_ARG
+#ifndef SCOPE_GUARD_ARG
 #ifdef __cpp_rvalue_references
-#define SCOPEGUARD_ARG(T) T&&
+#define SCOPE_GUARD_ARG(T) T&&
 #else 
-#define SCOPEGUARD_ARG(T) T&
+#define SCOPE_GUARD_ARG(T) T&
 #endif // __cpp_rvalue_references
-#endif // !SCOPEGUARD_ARG
+#endif // !SCOPE_GUARD_ARG
 
 class ScopeGuard
 {
@@ -27,79 +27,79 @@ public:
     }
 
     template<typename CB, typename T>
-    explicit ScopeGuard(CB callback_, SCOPEGUARD_ARG(T) value_)
+    explicit ScopeGuard(CB callback_, SCOPE_GUARD_ARG(T) value_)
         : dismissed(false), base(new CallBack1<CB, T>(callback_, value_))
     {
     }
 
     template<typename CB, typename T1, typename T2>
     explicit ScopeGuard(CB callback_,
-        SCOPEGUARD_ARG(T1) value1_, SCOPEGUARD_ARG(T2) value2_)
+        SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_)
         : dismissed(false), base(new CallBack2<CB, T1, T2>(callback_, value1_, value2_))
     {
     }
 
     template<typename CB, typename T1, typename T2, typename T3>
     explicit ScopeGuard(CB callback_,
-        SCOPEGUARD_ARG(T1) value1_, SCOPEGUARD_ARG(T2) value2_,
-        SCOPEGUARD_ARG(T3) value3_)
+        SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
+        SCOPE_GUARD_ARG(T3) value3_)
         : dismissed(false), base(new CallBack3<CB, T1, T2, T3>(callback_, value1_, value2_, value3_))
     {
     }
 
     template<typename CB, typename T1, typename T2, typename T3, typename T4>
     explicit ScopeGuard(CB callback_,
-        SCOPEGUARD_ARG(T1) value1_, SCOPEGUARD_ARG(T2) value2_,
-        SCOPEGUARD_ARG(T3) value3_, SCOPEGUARD_ARG(T4) value4_)
+        SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
+        SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_)
         : dismissed(false), base(new CallBack4<CB, T1, T2, T3, T4>(callback_, value1_, value2_, value3_, value4_))
     {
     }
 
     template<typename CB, typename T1, typename T2, typename T3, typename T4, typename T5>
     explicit ScopeGuard(CB callback_,
-        SCOPEGUARD_ARG(T1) value1_, SCOPEGUARD_ARG(T2) value2_,
-        SCOPEGUARD_ARG(T3) value3_, SCOPEGUARD_ARG(T4) value4_,
-        SCOPEGUARD_ARG(T5) value5_)
+        SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
+        SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
+        SCOPE_GUARD_ARG(T5) value5_)
         : dismissed(false), base(new CallBack5<CB, T1, T2, T3, T4, T5>(callback_, value1_, value2_, value3_, value4_, value5_))
     {
     }
 
     template<typename CB, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
     explicit ScopeGuard(CB callback_,
-        SCOPEGUARD_ARG(T1) value1_, SCOPEGUARD_ARG(T2) value2_,
-        SCOPEGUARD_ARG(T3) value3_, SCOPEGUARD_ARG(T4) value4_,
-        SCOPEGUARD_ARG(T5) value5_, SCOPEGUARD_ARG(T6) value6_)
+        SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
+        SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
+        SCOPE_GUARD_ARG(T5) value5_, SCOPE_GUARD_ARG(T6) value6_)
         : dismissed(false), base(new CallBack6<CB, T1, T2, T3, T4, T5, T6>(callback_, value1_, value2_, value3_, value4_, value5_, value6_))
     {
     }
 
     template<typename CB, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
     explicit ScopeGuard(CB callback_,
-        SCOPEGUARD_ARG(T1) value1_, SCOPEGUARD_ARG(T2) value2_,
-        SCOPEGUARD_ARG(T3) value3_, SCOPEGUARD_ARG(T4) value4_,
-        SCOPEGUARD_ARG(T5) value5_, SCOPEGUARD_ARG(T6) value6_,
-        SCOPEGUARD_ARG(T7) value7_)
+        SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
+        SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
+        SCOPE_GUARD_ARG(T5) value5_, SCOPE_GUARD_ARG(T6) value6_,
+        SCOPE_GUARD_ARG(T7) value7_)
         : dismissed(false), base(new CallBack7<CB, T1, T2, T3, T4, T5, T6, T7>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_))
     {
     }
 
     template<typename CB, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
     explicit ScopeGuard(CB callback_,
-        SCOPEGUARD_ARG(T1) value1_, SCOPEGUARD_ARG(T2) value2_,
-        SCOPEGUARD_ARG(T3) value3_, SCOPEGUARD_ARG(T4) value4_,
-        SCOPEGUARD_ARG(T5) value5_, SCOPEGUARD_ARG(T6) value6_,
-        SCOPEGUARD_ARG(T7) value7_, SCOPEGUARD_ARG(T8) value8_)
+        SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
+        SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
+        SCOPE_GUARD_ARG(T5) value5_, SCOPE_GUARD_ARG(T6) value6_,
+        SCOPE_GUARD_ARG(T7) value7_, SCOPE_GUARD_ARG(T8) value8_)
         : dismissed(false), base(new CallBack8<CB, T1, T2, T3, T4, T5, T6, T7, T8>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_, value8_))
     {
     }
 
     template<typename CB, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
     explicit ScopeGuard(CB callback_,
-        SCOPEGUARD_ARG(T1) value1_, SCOPEGUARD_ARG(T2) value2_,
-        SCOPEGUARD_ARG(T3) value3_, SCOPEGUARD_ARG(T4) value4_,
-        SCOPEGUARD_ARG(T5) value5_, SCOPEGUARD_ARG(T6) value6_,
-        SCOPEGUARD_ARG(T7) value7_, SCOPEGUARD_ARG(T8) value8_,
-        SCOPEGUARD_ARG(T9) value9_)
+        SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
+        SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
+        SCOPE_GUARD_ARG(T5) value5_, SCOPE_GUARD_ARG(T6) value6_,
+        SCOPE_GUARD_ARG(T7) value7_, SCOPE_GUARD_ARG(T8) value8_,
+        SCOPE_GUARD_ARG(T9) value9_)
         : dismissed(false), base(new CallBack9<CB, T1, T2, T3, T4, T5, T6, T7, T8, T9>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_, value8_, value9_))
     {
     }

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #ifndef SCOPE_GUARD_HPP
 #define SCOPE_GUARD_HPP
+#include <tuple> // std::tuple std::apply
+#include <utility> // std::move std::forward
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 26812)
@@ -14,12 +16,80 @@
 #endif // __cpp_rvalue_references
 #endif // !SCOPE_GUARD_ARG
 
+#ifndef NOEXCEPT
+#define NOEXCEPT
+#endif // !NOEXCEPT
+
 class ScopeGuard
 {
 public:
 
     enum Type { Delete = 0, DeleteArray };
 
+#if defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && (defined(__cpp_if_constexpr) || defined(__cpp_lib_apply))
+    template<typename CB, typename ...Args>
+    explicit ScopeGuard(CB callback_, Args&& ...args_)
+        : dismissed(false)
+    {
+#if defined(__cpp_lib_apply)
+        base = new CallBack<CB, Args...>(
+            callback_, std::tuple<Args&...>(std::forward<Args&>(args_)...));
+#elif defined(__cpp_if_constexpr)
+        if constexpr (sizeof...(args_) == 0)
+        {
+            base = new CallBack0<CB>(callback_);
+        }
+        else if constexpr (sizeof...(args_) == 1)
+        {
+            base = new CallBack1<CB, Args...>(callback_, args_...);
+        }
+        else if constexpr (sizeof...(args_) == 2)
+        {
+            base = new CallBack2<CB, Args...>(callback_, args_...);
+        }
+        else if constexpr (sizeof...(args_) == 3)
+        {
+
+            base = new CallBack3<CB, Args...>(callback_, args_...);
+        }
+        else if constexpr (sizeof...(args_) == 4)
+        {
+
+            base = new CallBack4<CB, Args...>(callback_, args_...);
+        }
+        else if constexpr (sizeof...(args_) == 5)
+        {
+
+            base = new CallBack5<CB, Args...>(callback_, args_...);
+        }
+        else if constexpr (sizeof...(args_) == 6)
+        {
+
+            base = new CallBack6<CB, Args...>(callback_, args_...);
+        }
+        else if constexpr (sizeof...(args_) == 7)
+        {
+
+            base = new CallBack7<CB, Args...>(callback_, args_...);
+        }
+        else if constexpr (sizeof...(args_) == 8)
+        {
+            base = new CallBack8<CB, Args...>(callback_, args_...);
+        }
+        else if constexpr (sizeof...(args_) == 9)
+        {
+            base = new CallBack9<CB, Args...>(callback_, args_...);
+        }
+        else
+        {
+            static_assert(false, "too more argument.");
+        }
+#else
+        static_assert(false, "compiler error.");
+#endif // defined(__cpp_lib_apply)
+    }
+
+#else
     template<typename CB>
     explicit ScopeGuard(CB callback_)
         : dismissed(false), base(new CallBack0<CB>(callback_))
@@ -103,6 +173,7 @@ public:
         : dismissed(false), base(new CallBack9<CB, T1, T2, T3, T4, T5, T6, T7, T8, T9>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_, value8_, value9_))
     {
     }
+#endif defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && (defined(__cpp_if_constexpr) || defined(__cpp_lib_apply))
 
     template<typename T>
     explicit ScopeGuard(Type type, T*& value_) // C26812 reported here
@@ -122,7 +193,7 @@ public:
         }
     }
 
-    void dissmiss()
+    void release() NOEXCEPT
     {
         dismissed = true;
     }
@@ -138,6 +209,24 @@ private:
         virtual ~Base() {}
     };
 
+#if defined(__cpp_lib_apply) && defined(__cpp_variadic_templates)
+    template<typename CB, typename ...Args>
+    struct CallBack : public Base
+    {
+        CallBack(CB callback_, SCOPE_GUARD_ARG(std::tuple<Args&...>) args_)
+            : callback(callback_), args(args_)
+        {
+        }
+
+        ~CallBack()
+        {
+            std::apply(callback, args);
+        }
+
+        CB callback;
+        std::tuple<Args&...> args;
+    };
+#else
     template<typename CB>
     struct CallBack0 : public Base
     {
@@ -341,6 +430,7 @@ private:
         T8& value8;
         T9& value9;
     };
+#endif // defined(__cpp_lib_apply) && defined(__cpp_variadic_templates)
 
     template<typename T>
     struct Ptr : public Base
@@ -377,9 +467,26 @@ private:
     Base* base;
 };
 
-#define SCOPE_GUARD_LINENAME_CAT(name, line) name##line
-#define SCOPE_GUARD_LINENAME(name, line) SCOPE_GUARD_LINENAME_CAT(name, line)
-#define ON_SCOPE_EXIT(...) ScopeGuard SCOPE_GUARD_LINENAME(ScopeGuard_, __LINE__)(##__VA_ARGS__)
+#ifndef SCOPE_GUARD_UNIQUE
+#if defined(__COUNTER__) && (__COUNTER__ + 1 == __COUNTER__ + 0)
+#define SCOPE_GUARD_UNIQUE __COUNTER__
+#else
+#define SCOPE_GUARD_UNIQUE __LINE__
+#endif // __COUNTER__
+#endif // !SCOPE_GUARD_UNIQUE
+
+#ifndef SCOPE_GUARD_UNIQUE_NAME_CAT
+#define SCOPE_GUARD_UNIQUE_NAME_CAT(name, unique) name##unique
+#endif // !SCOPE_GUARD_UNIQUE_NAME_CAT
+
+#ifndef SCOPE_GUARD_UNIQUE_NAME
+#define SCOPE_GUARD_UNIQUE_NAME(name, unique) SCOPE_GUARD_UNIQUE_NAME_CAT(name, unique)
+#endif // !SCOPE_GUARD_UNIQUE_NAME
+
+#ifndef ON_SCOPE_EXIT
+#define ON_SCOPE_EXIT(...) ScopeGuard SCOPE_GUARD_UNIQUE_NAME(ScopeGuard_, SCOPE_GUARD_UNIQUE)(##__VA_ARGS__)
+#endif // !ON_SCOPE_EXIT
+
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif // _MSC_VER

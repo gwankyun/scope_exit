@@ -1,5 +1,5 @@
 ﻿# cmake最低版本
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.18)
 
 # 啟用IDE目錄功能
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -16,18 +16,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 project(ScopeGuard)
 
 add_compile_options(
-    "$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP>")
+  "$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP>")
 
 # 生成執行文件
-add_executable(test "")
+set(test test)
+add_executable(${test})
 
-target_sources(test 
-    PRIVATE
-        src/main.cpp
-)
+target_sources(${test} 
+  PRIVATE
+    src/main.cpp
+    include/ScopeGuard/ScopeGuard.hpp)
+
+target_compile_features(${test} PRIVATE cxx_std_17)
 
 # 頭文件目錄
-target_include_directories(test
-    PRIVATE
-        include
-)
+target_include_directories(${test}
+  PRIVATE
+    include)

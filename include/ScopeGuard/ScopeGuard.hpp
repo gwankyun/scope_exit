@@ -1,12 +1,14 @@
 ﻿#pragma once
 #ifndef SCOPE_GUARD_HPP
 #define SCOPE_GUARD_HPP
-#include <tuple> // std::tuple std::apply
 #include <utility> // std::move std::forward
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 26812)
-#endif // _MSC_VER
+
+#if defined(__cpp_lib_apply)
+#include <tuple> // std::tuple std::apply
+#endif // defined(__cpp_lib_apply)
+
+#include "compiler_detection.h"
+#include "marco.h"
 
 #ifndef SCOPE_GUARD_ARG
 #ifdef __cpp_rvalue_references
@@ -16,96 +18,53 @@
 #endif // __cpp_rvalue_references
 #endif // !SCOPE_GUARD_ARG
 
-#ifndef NOEXCEPT
-#define NOEXCEPT
-#endif // !NOEXCEPT
+#ifndef SCOPE_GUARD_HAS_CXX_17
+#if defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && defined(__cpp_lib_apply)
+#define SCOPE_GUARD_HAS_CXX_17 1
+#else
+#define SCOPE_GUARD_HAS_CXX_17 0
+#endif // defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && defined(__cpp_lib_apply)
+#endif // !SCOPE_GUARD_HAS_CXX_17
 
 class ScopeGuard
 {
 public:
 
+#if FEATURE_COMPILER_CXX_STRONG_ENUMS
+    enum struct Type { Delete = 0, DeleteArray };
+    static const Type Delete = Type::Delete;
+    static const Type DeleteArray = Type::DeleteArray;
+#else
     enum Type { Delete = 0, DeleteArray };
+#endif // FEATURE_COMPILER_CXX_STRONG_ENUMS
 
-#if defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && (defined(__cpp_if_constexpr) || defined(__cpp_lib_apply))
+#if SCOPE_GUARD_HAS_CXX_17
     template<typename CB, typename ...Args>
     explicit ScopeGuard(CB callback_, Args&& ...args_)
         : dismissed(false)
+        , base(new CallBack<CB, Args...>(callback_, std::tuple<Args&...>(std::forward<Args&>(args_)...)))
     {
-#if defined(__cpp_lib_apply)
-        base = new CallBack<CB, Args...>(
-            callback_, std::tuple<Args&...>(std::forward<Args&>(args_)...));
-#elif defined(__cpp_if_constexpr)
-        if constexpr (sizeof...(args_) == 0)
-        {
-            base = new CallBack0<CB>(callback_);
-        }
-        else if constexpr (sizeof...(args_) == 1)
-        {
-            base = new CallBack1<CB, Args...>(callback_, args_...);
-        }
-        else if constexpr (sizeof...(args_) == 2)
-        {
-            base = new CallBack2<CB, Args...>(callback_, args_...);
-        }
-        else if constexpr (sizeof...(args_) == 3)
-        {
-
-            base = new CallBack3<CB, Args...>(callback_, args_...);
-        }
-        else if constexpr (sizeof...(args_) == 4)
-        {
-
-            base = new CallBack4<CB, Args...>(callback_, args_...);
-        }
-        else if constexpr (sizeof...(args_) == 5)
-        {
-
-            base = new CallBack5<CB, Args...>(callback_, args_...);
-        }
-        else if constexpr (sizeof...(args_) == 6)
-        {
-
-            base = new CallBack6<CB, Args...>(callback_, args_...);
-        }
-        else if constexpr (sizeof...(args_) == 7)
-        {
-
-            base = new CallBack7<CB, Args...>(callback_, args_...);
-        }
-        else if constexpr (sizeof...(args_) == 8)
-        {
-            base = new CallBack8<CB, Args...>(callback_, args_...);
-        }
-        else if constexpr (sizeof...(args_) == 9)
-        {
-            base = new CallBack9<CB, Args...>(callback_, args_...);
-        }
-        else
-        {
-            static_assert(false, "too more argument.");
-        }
-#else
-        static_assert(false, "compiler error.");
-#endif // defined(__cpp_lib_apply)
     }
-
 #else
     template<typename CB>
     explicit ScopeGuard(CB callback_)
-        : dismissed(false), base(new CallBack0<CB>(callback_))
+        : dismissed(false)
+        , base(new CallBack0<CB>(callback_))
     {
     }
 
     template<typename CB, typename T>
     explicit ScopeGuard(CB callback_, SCOPE_GUARD_ARG(T) value_)
-        : dismissed(false), base(new CallBack1<CB, T>(callback_, value_))
+        : dismissed(false)
+        , base(new CallBack1<CB, T>(callback_, value_))
     {
     }
 
     template<typename CB, typename T1, typename T2>
     explicit ScopeGuard(CB callback_,
         SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_)
-        : dismissed(false), base(new CallBack2<CB, T1, T2>(callback_, value1_, value2_))
+        : dismissed(false)
+        , base(new CallBack2<CB, T1, T2>(callback_, value1_, value2_))
     {
     }
 
@@ -113,7 +72,8 @@ public:
     explicit ScopeGuard(CB callback_,
         SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
         SCOPE_GUARD_ARG(T3) value3_)
-        : dismissed(false), base(new CallBack3<CB, T1, T2, T3>(callback_, value1_, value2_, value3_))
+        : dismissed(false)
+        , base(new CallBack3<CB, T1, T2, T3>(callback_, value1_, value2_, value3_))
     {
     }
 
@@ -121,7 +81,8 @@ public:
     explicit ScopeGuard(CB callback_,
         SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
         SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_)
-        : dismissed(false), base(new CallBack4<CB, T1, T2, T3, T4>(callback_, value1_, value2_, value3_, value4_))
+        : dismissed(false)
+        , base(new CallBack4<CB, T1, T2, T3, T4>(callback_, value1_, value2_, value3_, value4_))
     {
     }
 
@@ -130,7 +91,8 @@ public:
         SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
         SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
         SCOPE_GUARD_ARG(T5) value5_)
-        : dismissed(false), base(new CallBack5<CB, T1, T2, T3, T4, T5>(callback_, value1_, value2_, value3_, value4_, value5_))
+        : dismissed(false)
+        , base(new CallBack5<CB, T1, T2, T3, T4, T5>(callback_, value1_, value2_, value3_, value4_, value5_))
     {
     }
 
@@ -139,7 +101,8 @@ public:
         SCOPE_GUARD_ARG(T1) value1_, SCOPE_GUARD_ARG(T2) value2_,
         SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
         SCOPE_GUARD_ARG(T5) value5_, SCOPE_GUARD_ARG(T6) value6_)
-        : dismissed(false), base(new CallBack6<CB, T1, T2, T3, T4, T5, T6>(callback_, value1_, value2_, value3_, value4_, value5_, value6_))
+        : dismissed(false)
+        , base(new CallBack6<CB, T1, T2, T3, T4, T5, T6>(callback_, value1_, value2_, value3_, value4_, value5_, value6_))
     {
     }
 
@@ -149,7 +112,8 @@ public:
         SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
         SCOPE_GUARD_ARG(T5) value5_, SCOPE_GUARD_ARG(T6) value6_,
         SCOPE_GUARD_ARG(T7) value7_)
-        : dismissed(false), base(new CallBack7<CB, T1, T2, T3, T4, T5, T6, T7>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_))
+        : dismissed(false)
+        , base(new CallBack7<CB, T1, T2, T3, T4, T5, T6, T7>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_))
     {
     }
 
@@ -159,7 +123,8 @@ public:
         SCOPE_GUARD_ARG(T3) value3_, SCOPE_GUARD_ARG(T4) value4_,
         SCOPE_GUARD_ARG(T5) value5_, SCOPE_GUARD_ARG(T6) value6_,
         SCOPE_GUARD_ARG(T7) value7_, SCOPE_GUARD_ARG(T8) value8_)
-        : dismissed(false), base(new CallBack8<CB, T1, T2, T3, T4, T5, T6, T7, T8>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_, value8_))
+        : dismissed(false)
+        , base(new CallBack8<CB, T1, T2, T3, T4, T5, T6, T7, T8>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_, value8_))
     {
     }
 
@@ -170,13 +135,14 @@ public:
         SCOPE_GUARD_ARG(T5) value5_, SCOPE_GUARD_ARG(T6) value6_,
         SCOPE_GUARD_ARG(T7) value7_, SCOPE_GUARD_ARG(T8) value8_,
         SCOPE_GUARD_ARG(T9) value9_)
-        : dismissed(false), base(new CallBack9<CB, T1, T2, T3, T4, T5, T6, T7, T8, T9>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_, value8_, value9_))
+        : dismissed(false)
+        , base(new CallBack9<CB, T1, T2, T3, T4, T5, T6, T7, T8, T9>(callback_, value1_, value2_, value3_, value4_, value5_, value6_, value7_, value8_, value9_))
     {
     }
-#endif defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && (defined(__cpp_if_constexpr) || defined(__cpp_lib_apply))
+#endif // SCOPE_GUARD_HAS_CXX_17
 
     template<typename T>
-    explicit ScopeGuard(Type type, T*& value_) // C26812 reported here
+    explicit ScopeGuard(Type type, T*& value_)
         : dismissed(false), base(new Ptr<T>(type, value_))
     {
     }
@@ -193,15 +159,15 @@ public:
         }
     }
 
-    void release() NOEXCEPT
+    void release() FEATURE_NOEXCEPT
     {
         dismissed = true;
     }
 
 private:
 
-    ScopeGuard(const ScopeGuard&);
-    ScopeGuard& operator=(const ScopeGuard&);
+    ScopeGuard(const ScopeGuard&) FEATURE_DELETED_FUNCTION;
+    ScopeGuard& operator=(const ScopeGuard&) FEATURE_DELETED_FUNCTION;
 
     struct Base
     {
@@ -209,7 +175,7 @@ private:
         virtual ~Base() {}
     };
 
-#if defined(__cpp_lib_apply) && defined(__cpp_variadic_templates)
+#if SCOPE_GUARD_HAS_CXX_17
     template<typename CB, typename ...Args>
     struct CallBack : public Base
     {
@@ -430,7 +396,7 @@ private:
         T8& value8;
         T9& value9;
     };
-#endif // defined(__cpp_lib_apply) && defined(__cpp_variadic_templates)
+#endif // SCOPE_GUARD_HAS_CXX_17
 
     template<typename T>
     struct Ptr : public Base
@@ -467,27 +433,8 @@ private:
     Base* base;
 };
 
-#ifndef SCOPE_GUARD_UNIQUE
-#if defined(__COUNTER__) && (__COUNTER__ + 1 == __COUNTER__ + 0)
-#define SCOPE_GUARD_UNIQUE __COUNTER__
-#else
-#define SCOPE_GUARD_UNIQUE __LINE__
-#endif // __COUNTER__
-#endif // !SCOPE_GUARD_UNIQUE
-
-#ifndef SCOPE_GUARD_UNIQUE_NAME_CAT
-#define SCOPE_GUARD_UNIQUE_NAME_CAT(name, unique) name##unique
-#endif // !SCOPE_GUARD_UNIQUE_NAME_CAT
-
-#ifndef SCOPE_GUARD_UNIQUE_NAME
-#define SCOPE_GUARD_UNIQUE_NAME(name, unique) SCOPE_GUARD_UNIQUE_NAME_CAT(name, unique)
-#endif // !SCOPE_GUARD_UNIQUE_NAME
-
 #ifndef ON_SCOPE_EXIT
-#define ON_SCOPE_EXIT(...) ScopeGuard SCOPE_GUARD_UNIQUE_NAME(ScopeGuard_, SCOPE_GUARD_UNIQUE)(##__VA_ARGS__)
+#define ON_SCOPE_EXIT(...) ScopeGuard UNIQUE_NAME(ScopeGuard_, UNIQUE)(##__VA_ARGS__)
 #endif // !ON_SCOPE_EXIT
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif // _MSC_VER
 #endif // !SCOPE_GUARD_HPP

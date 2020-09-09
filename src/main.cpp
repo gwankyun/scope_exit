@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#define SCOPE_GUARD_HAS_CXX_17 0
 #include <ScopeGuard/ScopeGuard.hpp>
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -83,10 +84,10 @@ void bye9(int a, int b, int c, int d, int e, int f, int g, int h, int i)
 
 int main()
 {
-    ON_SCOPE_EXIT([]()
-    {
-        std::cout << "exit" << std::endl;
-    });
+    //ON_SCOPE_EXIT([]()
+    //{
+    //    std::cout << "exit" << std::endl;
+    //});
 
     {
     }
@@ -120,15 +121,15 @@ int main()
     {
         int a;
         ON_SCOPE_EXIT(bye0);
-        ON_SCOPE_EXIT(bye1, 1);
+        ON_SCOPE_EXIT(bye1, a);
         ON_SCOPE_EXIT(bye2, a, a);
-        ON_SCOPE_EXIT(bye3, a, 1, a);
-        ON_SCOPE_EXIT(bye4, a, a, 1, a);
-        ON_SCOPE_EXIT(bye5, a, a, 1, a, a);
-        ON_SCOPE_EXIT(bye6, a, a, a, 1, a, a);
-        ON_SCOPE_EXIT(bye7, a, a, a, a, 1, a, a);
-        ON_SCOPE_EXIT(bye8, a, a, a, a, a, 1, a, a);
-        ON_SCOPE_EXIT(bye9, a, a, a, a, a, a, 1, a, a);
+        ON_SCOPE_EXIT(bye3, a, a, a);
+        ON_SCOPE_EXIT(bye4, a, a, a, a);
+        ON_SCOPE_EXIT(bye5, a, a, a, a, a);
+        ON_SCOPE_EXIT(bye6, a, a, a, a, a, a);
+        ON_SCOPE_EXIT(bye7, a, a, a, a, a, a, a);
+        ON_SCOPE_EXIT(bye8, a, a, a, a, a, a, a, a);
+        ON_SCOPE_EXIT(bye9, a, a, a, a, a, a, a, a, a);
     }
 
     std::cout << sizeof(ScopeGuard) << std::endl;

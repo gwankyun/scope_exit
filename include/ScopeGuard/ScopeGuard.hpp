@@ -65,7 +65,7 @@
         } \
         ~BOOST_PP_CAT(CallBack, n)() \
         { \
-            callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1 ... */ \
+            callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
         } \
         CB callback; \
         BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_VALUE, T) /* T0& T0_; T1& T1_; ... */ \

@@ -25,13 +25,14 @@ add_executable(${test})
 target_sources(${test} 
   PRIVATE
     src/main.cpp
-    include/ScopeGuard/ScopeGuard.hpp
-    include/ScopeGuard/compiler_detection.h
-    include/ScopeGuard/marco.h)
+    include/ScopeGuard.hpp
+    include/ScopeGuard/compiler_detection.hpp
+    include/ScopeGuard/marco.hpp)
 
 target_compile_features(${test} PRIVATE cxx_std_17)
 
 # 頭文件目錄
 target_include_directories(${test}
   PRIVATE
-    include)
+    include
+    include/ScopeGuard)

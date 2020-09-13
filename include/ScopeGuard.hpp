@@ -2,16 +2,17 @@
 #ifndef SCOPE_GUARD_HPP
 #define SCOPE_GUARD_HPP
 #include <utility> // std::move std::forward
+#include "has_include.hpp"
 
-#if defined(__cpp_lib_apply)
+#if __HAS_INCLUDE(tuple)
 #include <tuple> // std::tuple std::apply
-#endif // defined(__cpp_lib_apply)
+#endif // __HAS_INCLUDE(tuple)
 
-#include "compiler_detection.h"
-#include "marco.h"
-#include <boost/preprocessor/comma_if.hpp>
-#include <boost/preprocessor/repeat.hpp>
-#include <boost/preprocessor/inc.hpp>
+#include "ScopeGuard/compiler_detection.hpp"
+#include "ScopeGuard/marco.hpp"
+#include "ScopeGuard/boost/preprocessor/comma_if.hpp"
+#include "ScopeGuard/boost/preprocessor/repeat.hpp"
+#include "ScopeGuard/boost/preprocessor/inc.hpp"
 
 #ifndef SCOPE_GUARD_ARG
 #ifdef __cpp_rvalue_references
@@ -185,7 +186,7 @@ private:
 };
 
 #ifndef ON_SCOPE_EXIT
-#define ON_SCOPE_EXIT(...) ScopeGuard UNIQUE_NAME(ScopeGuard_, UNIQUE)(##__VA_ARGS__)
+#define ON_SCOPE_EXIT(...) ScopeGuard UNIQUE_NAME(ScopeGuard_, UNIQUE_ID)(##__VA_ARGS__)
 #endif // !ON_SCOPE_EXIT
 
 #endif // !SCOPE_GUARD_HPP

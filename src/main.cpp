@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #define SCOPE_GUARD_HAS_CXX_17 0
-#include <ScopeGuard/ScopeGuard.hpp>
+#include <ScopeGuard.hpp>
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4100)
@@ -84,13 +84,10 @@ void bye9(int a, int b, int c, int d, int e, int f, int g, int h, int i)
 
 int main()
 {
-    //ON_SCOPE_EXIT([]()
-    //{
-    //    std::cout << "exit" << std::endl;
-    //});
-
+    ON_SCOPE_EXIT([]()
     {
-    }
+        std::cout << "exit" << std::endl;
+    });
 
     auto obj1 = new Object(1);
     auto obj2 = new Object(2);

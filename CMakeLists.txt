@@ -18,21 +18,27 @@ project(ScopeGuard)
 add_compile_options(
   "$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP>")
 
+set(ScopeGuard_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+find_package(ScopeGuard)
+if(ScopeGuard_FOUND)
+  cmake_print_variables(ScopeGuard_INCLUDE_DIRS)
+else()
+    message(FATAL_ERROR "Looking for ScopeGuard - not found")
+endif()
+
 # 生成執行文件
 set(test test)
 add_executable(${test})
 
-target_sources(${test} 
+target_sources(${test}
   PRIVATE
     src/main.cpp
-    include/ScopeGuard.hpp
-    include/ScopeGuard/compiler_detection.hpp
-    include/ScopeGuard/marco.hpp)
+)
+
+# 引用庫
+target_link_libraries(${test}
+  PUBLIC
+    ScopeGuard::ScopeGuard
+)
 
 target_compile_features(${test} PRIVATE cxx_std_17)
-
-# 頭文件目錄
-target_include_directories(${test}
-  PRIVATE
-    include
-    include/ScopeGuard)

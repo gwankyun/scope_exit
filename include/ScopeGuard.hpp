@@ -2,7 +2,7 @@
 #ifndef SCOPE_GUARD_HPP
 #define SCOPE_GUARD_HPP
 #include <utility> // std::move std::forward
-#include "has_include.hpp"
+#include "ScopeGuard/has_include.hpp"
 
 #if __HAS_INCLUDE(tuple)
 #include <tuple> // std::tuple std::apply

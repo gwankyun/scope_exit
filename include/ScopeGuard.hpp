@@ -30,18 +30,39 @@
 #endif // defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && defined(__cpp_lib_apply)
 #endif // !SCOPE_GUARD_HAS_CXX_17
 
+#ifndef NULLPTR
+#define NULLPTR FEATURE_NULLPTR
+#endif // !NULLPTR
+
+#ifndef NOEXCEPT
+#define NOEXCEPT FEATURE_NOEXCEPT
+#endif // !NOEXCEPT
+
+#ifndef DELETED_FUNCTION
+#define DELETED_FUNCTION FEATURE_DELETED_FUNCTION
+#endif // !DELETED_FUNCTION
+
+#ifndef SCOPE_GUARD_TYPENAME
 #define SCOPE_GUARD_TYPENAME(z, n, x) , typename x##n
+#endif // !SCOPE_GUARD_TYPENAME
 
+#ifndef SCOPE_GUARD_PARAMETER
 #define SCOPE_GUARD_PARAMETER(z, n, x) , SCOPE_GUARD_ARG(x##n) _##x##n
+#endif // !SCOPE_GUARD_PARAMETER
 
+#ifndef SCOPE_GUARD_ARGUMENT
 #define SCOPE_GUARD_ARGUMENT(z, n, x) , _##x##n
+#endif // !SCOPE_GUARD_ARGUMENT
 
+#ifndef SCOPE_GUARD_TYPE
 #define SCOPE_GUARD_TYPE(z, n, x) , x##n
+#endif // !SCOPE_GUARD_TYPE
 
 #ifndef BOOST_PP_REPEAT_Z
 #define BOOST_PP_REPEAT_Z(z) BOOST_PP_REPEAT_##z
 #endif // !BOOST_PP_REPEAT_Z
 
+#ifndef SCOPE_GUARD
 #define SCOPE_GUARD(z, n, _) \
     template<typename CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
     explicit ScopeGuard(CB callback_ \
@@ -51,11 +72,21 @@
             (callback_ BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_ARGUMENT, T))) /* , _T0, _T1 ... */ \
     { \
     }
+#endif // !SCOPE_GUARD
 
+#ifndef SCOPE_GUARD_INIT
 #define SCOPE_GUARD_INIT(z, n, x) , x##n##_(_##x##n##)
-#define SCOPE_GUARD_CALL_VALUE(z, n, x) BOOST_PP_COMMA_IF(n) x##n##_
-#define SCOPE_GUARD_VALUE(z, n, x) x##n& x##n##_;
+#endif // !SCOPE_GUARD_INIT
 
+#ifndef SCOPE_GUARD_CALL_VALUE
+#define SCOPE_GUARD_CALL_VALUE(z, n, x) BOOST_PP_COMMA_IF(n) x##n##_
+#endif // !SCOPE_GUARD_CALL_VALUE
+
+#ifndef SCOPE_GUARD_VALUE
+#define SCOPE_GUARD_VALUE(z, n, x) x##n& x##n##_;
+#endif // !SCOPE_GUARD_VALUE
+
+#ifndef SCOPE_GUARD_CALLBACK
 #define SCOPE_GUARD_CALLBACK(z, n, _) \
     template<typename CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
     struct BOOST_PP_CAT(CallBack, n) : public Base \
@@ -71,6 +102,7 @@
         CB callback; \
         BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_VALUE, T) /* T0& T0_; T1& T1_; ... */ \
     };
+#endif // !SCOPE_GUARD_CALLBACK
 
 class ScopeGuard
 {
@@ -105,23 +137,23 @@ public:
     {
         if (!dismissed)
         {
-            if (base != NULL)
+            if (base != NULLPTR)
             {
                 delete base;
-                base = NULL;
+                base = NULLPTR;
             }
         }
     }
 
-    void release() FEATURE_NOEXCEPT
+    void release() NOEXCEPT
     {
         dismissed = true;
     }
 
 private:
 
-    ScopeGuard(const ScopeGuard&) FEATURE_DELETED_FUNCTION;
-    ScopeGuard& operator=(const ScopeGuard&) FEATURE_DELETED_FUNCTION;
+    ScopeGuard(const ScopeGuard&) DELETED_FUNCTION;
+    ScopeGuard& operator=(const ScopeGuard&) DELETED_FUNCTION;
 
     struct Base
     {
@@ -159,17 +191,17 @@ private:
 
         ~Ptr()
         {
-            if (value != NULL)
+            if (value != NULLPTR)
             {
                 switch (type)
                 {
                 case ScopeGuard::Delete:
                     delete value;
-                    value = NULL;
+                    value = NULLPTR;
                     break;
                 case ScopeGuard::DeleteArray:
                     delete[] value;
-                    value = NULL;
+                    value = NULLPTR;
                     break;
                 default:
                     break;

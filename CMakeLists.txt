@@ -16,15 +16,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 project(ScopeGuard)
 
 add_compile_options(
-  "$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP>")
+  "$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP;/Zc:__cplusplus;>")
 
 set(ScopeGuard_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
-find_package(ScopeGuard)
-if(ScopeGuard_FOUND)
-  cmake_print_variables(ScopeGuard_INCLUDE_DIRS)
-else()
-    message(FATAL_ERROR "Looking for ScopeGuard - not found")
-endif()
+find_package(ScopeGuard REQUIRED)
 
 # 生成執行文件
 set(test test)

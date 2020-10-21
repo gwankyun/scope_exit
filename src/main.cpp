@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-#define SCOPE_GUARD_HAS_CXX_17 0
+//#define SCOPE_GUARD_HAS_CXX_17 0
 #include <ScopeGuard.hpp>
 #ifdef _MSC_VER
 #pragma warning(push)

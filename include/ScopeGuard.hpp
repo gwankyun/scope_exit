@@ -2,95 +2,19 @@
 #ifndef SCOPE_GUARD_HPP
 #define SCOPE_GUARD_HPP
 #include <utility> // std::move std::forward
+#include <functional>
+#include <cassert>
 #include "ScopeGuard/has_include.hpp"
 
 #if __HAS_INCLUDE(tuple)
-#  include <tuple> // std::tuple std::apply
+#  include <tuple> // std::tuple std::apply std::forward_as_tuple
 #endif // __HAS_INCLUDE(tuple)
 
+#if __HAS_INCLUDE(type_traits)
+#  include <type_traits> // std::true_type std::false_type std::is_function
+#endif // __HAS_INCLUDE(type_traits)
+
 #include "ScopeGuard/marco.hpp"
-#include "ScopeGuard/boost/preprocessor/comma_if.hpp"
-#include "ScopeGuard/boost/preprocessor/repeat.hpp"
-#include "ScopeGuard/boost/preprocessor/inc.hpp"
-#include "ScopeGuard/compiler_detection/short.hpp"
-
-#ifndef SCOPE_GUARD_ARG
-#  ifdef __cpp_rvalue_references
-#    define SCOPE_GUARD_ARG(T) T&&
-#else 
-#    define SCOPE_GUARD_ARG(T) T&
-#  endif // __cpp_rvalue_references
-#endif // !SCOPE_GUARD_ARG
-
-#ifndef SCOPE_GUARD_HAS_CXX_17
-#  if __cplusplus >= 201703L || (defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && defined(__cpp_lib_apply))
-#    define SCOPE_GUARD_HAS_CXX_17 1
-#  else
-#    define SCOPE_GUARD_HAS_CXX_17 0
-#  endif // __cplusplus >= 201402L || (defined(__cpp_variadic_templates) && defined(__cpp_rvalue_references) && defined(__cpp_lib_apply))
-#endif // !SCOPE_GUARD_HAS_CXX_17
-
-#ifndef SCOPE_GUARD_TYPENAME
-#  define SCOPE_GUARD_TYPENAME(z, n, x) , typename x##n
-#endif // !SCOPE_GUARD_TYPENAME
-
-#ifndef SCOPE_GUARD_PARAMETER
-#  define SCOPE_GUARD_PARAMETER(z, n, x) , SCOPE_GUARD_ARG(x##n) _##x##n
-#endif // !SCOPE_GUARD_PARAMETER
-
-#ifndef SCOPE_GUARD_ARGUMENT
-#  define SCOPE_GUARD_ARGUMENT(z, n, x) , _##x##n
-#endif // !SCOPE_GUARD_ARGUMENT
-
-#ifndef SCOPE_GUARD_TYPE
-#  define SCOPE_GUARD_TYPE(z, n, x) , x##n
-#endif // !SCOPE_GUARD_TYPE
-
-#ifndef BOOST_PP_REPEAT_Z
-#  define BOOST_PP_REPEAT_Z(z) BOOST_PP_REPEAT_##z
-#endif // !BOOST_PP_REPEAT_Z
-
-#ifndef SCOPE_GUARD
-#define SCOPE_GUARD(z, n, _) \
-    template<typename CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
-    explicit ScopeGuard(CB callback_ \
-      BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
-      : dismissed(false) \
-      , base(new BOOST_PP_CAT(CallBack, n)<CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
-          (callback_ BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_ARGUMENT, T))) /* , _T0, _T1 ... */ \
-    { \
-    }
-#endif // !SCOPE_GUARD
-
-#ifndef SCOPE_GUARD_INIT
-#  define SCOPE_GUARD_INIT(z, n, x) , x##n##_(_##x##n##)
-#endif // !SCOPE_GUARD_INIT
-
-#ifndef SCOPE_GUARD_CALL_VALUE
-#  define SCOPE_GUARD_CALL_VALUE(z, n, x) BOOST_PP_COMMA_IF(n) x##n##_
-#endif // !SCOPE_GUARD_CALL_VALUE
-
-#ifndef SCOPE_GUARD_VALUE
-#  define SCOPE_GUARD_VALUE(z, n, x) x##n& x##n##_;
-#endif // !SCOPE_GUARD_VALUE
-
-#ifndef SCOPE_GUARD_CALLBACK
-#define SCOPE_GUARD_CALLBACK(z, n, _) \
-    template<typename CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
-    struct BOOST_PP_CAT(CallBack, n) : public Base \
-    { \
-        BOOST_PP_CAT(CallBack, n)(CB callback_ BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
-            : callback(callback_) BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_INIT, T) /* , T0_(_T0), T1_(_T1) ... */ \
-        { \
-        } \
-        ~BOOST_PP_CAT(CallBack, n)() \
-        { \
-            callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
-        } \
-        CB callback; \
-        BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_VALUE, T) /* T0& T0_; T1& T1_; ... */ \
-    };
-#endif // !SCOPE_GUARD_CALLBACK
 
 class ScopeGuard
 {
@@ -104,24 +28,54 @@ public:
     enum Type { Delete = 0, DeleteArray };
 #endif // FEATURE_COMPILER_CXX_STRONG_ENUMS
 
-#if SCOPE_GUARD_HAS_CXX_17
-    template<typename CB, typename ...Args>
-    explicit ScopeGuard(CB callback_, Args&& ...args_)
+#if SCOPE_GUARD_HAS_CXX_11
+    template<typename R, typename CB, typename ...Args>
+    explicit ScopeGuard(
+        std::reference_wrapper<R> result,
+        CB callback,
+        Args&&... args)
         : dismissed(false)
-        , base(new CallBack<CB, Args...>(callback_, std::tuple<Args&...>(std::forward<Args&>(args_)...)))
+        , base(onDestroy([result, callback, &args...]()
+            {
+                result.get() = callback(std::forward<Args>(args)...);
+            }))
     {
     }
+
+    template<typename CB, typename ...Args>
+    explicit ScopeGuard(
+        CB callback,
+        Args&&... args)
+        : dismissed(false)
+        , base(onDestroy([callback, &args...]()
+            {
+                callback(std::forward<Args>(args)...);
+            }))
+    {
+    }
+
 #else
     BOOST_PP_REPEAT(10, SCOPE_GUARD, _)
-#endif // SCOPE_GUARD_HAS_CXX_17
+#endif // SCOPE_GUARD_HAS_CXX_11
 
     template<typename T>
     explicit ScopeGuard(Type type, T*& value_)
-        : dismissed(false), base(new Ptr<T>(type, value_))
+        : dismissed(false)
+        , base(new Ptr<T>(type, value_))
     {
     }
 
     ~ScopeGuard()
+    {
+        reset();
+    }
+
+    void release() NOEXCEPT
+    {
+        dismissed = true;
+    }
+
+    void reset() NOEXCEPT
     {
         if (!dismissed)
         {
@@ -131,11 +85,6 @@ public:
                 base = NULLPTR;
             }
         }
-    }
-
-    void release() NOEXCEPT
-    {
-        dismissed = true;
     }
 
 private:
@@ -149,31 +98,39 @@ private:
         virtual ~Base() {}
     };
 
-#if SCOPE_GUARD_HAS_CXX_17
-    template<typename CB, typename ...Args>
+#if SCOPE_GUARD_HAS_CXX_11
+    template<typename Fn>
     struct CallBack : public Base
     {
-        CallBack(CB callback_, SCOPE_GUARD_ARG(std::tuple<Args&...>) args_)
-            : callback(callback_), args(args_)
+        CallBack(Fn fn_)
+            : fn(fn_)
         {
         }
 
         ~CallBack()
         {
-            std::apply(callback, args);
+            fn();
         }
 
-        CB callback;
-        std::tuple<Args&...> args;
+        Fn fn;
     };
+
+    template<typename Fn>
+    inline Base* onDestroy(Fn fn)
+    {
+        return new CallBack<Fn>(fn);
+    };
+
 #else
     BOOST_PP_REPEAT(10, SCOPE_GUARD_CALLBACK, _)
-#endif // SCOPE_GUARD_HAS_CXX_17
+#endif // SCOPE_GUARD_HAS_CXX_11
 
     template<typename T>
     struct Ptr : public Base
     {
-        Ptr(Type type_, T*& value_) : type(type_), value(value_)
+        Ptr(const Type& type_, T*& value_)
+            : type(type_)
+            , value(value_)
         {
         }
 
@@ -192,6 +149,7 @@ private:
                     value = NULLPTR;
                     break;
                 default:
+                    assert(false);
                     break;
                 }
             }
@@ -205,8 +163,17 @@ private:
     Base* base;
 };
 
+#if SCOPE_GUARD_HAS_CXX_11
+#  define SCOPE_GUARD_REF(x) std::ref(x)
+#  define SCOPE_GUARD_CREF(x) std::cref(x)
+#else 
+#  define SCOPE_GUARD_REF(x) boost::ref(x)
+#  define SCOPE_GUARD_CREF(x) boost::cref(x)
+#endif // SCOPE_GUARD_HAS_CXX_11
+
 #ifndef ON_SCOPE_EXIT
 #  define ON_SCOPE_EXIT(...) ScopeGuard UNIQUE_NAME(ScopeGuard_, UNIQUE_ID)(##__VA_ARGS__)
 #endif // !ON_SCOPE_EXIT
 
 #endif // !SCOPE_GUARD_HPP
+

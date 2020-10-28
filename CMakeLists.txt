@@ -22,18 +22,36 @@ set(ScopeGuard_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(ScopeGuard REQUIRED)
 
 # 生成執行文件
-set(test test)
-add_executable(${test})
+set(ScopeGuard ScopeGuard)
+add_executable(${ScopeGuard})
 
-target_sources(${test}
+target_sources(${ScopeGuard}
   PRIVATE
     src/main.cpp
+    include/ScopeGuard.hpp
+    include/ScopeGuard/marco.hpp
 )
 
 # 引用庫
-target_link_libraries(${test}
+target_link_libraries(${ScopeGuard}
   PUBLIC
     ScopeGuard::ScopeGuard
 )
 
-target_compile_features(${test} PRIVATE cxx_std_17)
+target_compile_features(${ScopeGuard} PRIVATE cxx_std_17)
+
+# 如果找到Catch2就添加測試
+find_package(Catch2 CONFIG)
+cmake_print_variables(Catch2_FOUND)
+
+if(Catch2_FOUND)
+  set(test test)
+  add_executable(${test})
+  target_sources(${test}
+    PRIVATE src/test.cpp)
+  target_link_libraries(${test}
+    PUBLIC
+      ScopeGuard::ScopeGuard Catch2::Catch2)
+  target_compile_features(${test} PRIVATE cxx_std_17)
+endif()
+

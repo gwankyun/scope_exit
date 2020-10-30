@@ -44,7 +44,7 @@
 #  endif // SCOPE_GUARD_HAS_CXX_11
 #endif // !SCOPE_GUARD_ARG
 
-#if !SCOPE_GUARD_HAS_CXX_17
+#if !SCOPE_GUARD_HAS_CXX_11
 #include "ScopeGuard/boost/preprocessor/comma_if.hpp"
 #include "ScopeGuard/boost/preprocessor/repeat.hpp"
 #include "ScopeGuard/boost/preprocessor/inc.hpp"
@@ -76,8 +76,7 @@
         boost::reference_wrapper<R> result, \
         CB callback_ \
         BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
-        : dismissed(false) \
-        , base(new BOOST_PP_CAT(CallBackT, n)<R, CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
+        : base(new BOOST_PP_CAT(CallBackT, n)<R, CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
             (result, callback_ BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_ARGUMENT, T))) /* , _T0, _T1 ... */ \
     { \
     } \
@@ -85,8 +84,7 @@
     explicit ScopeGuard( \
         CB callback_ \
         BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
-        : dismissed(false) \
-        , base(new BOOST_PP_CAT(CallBackF, n)<CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
+        : base(new BOOST_PP_CAT(CallBackF, n)<CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
             (callback_ BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_ARGUMENT, T))) /* , _T0, _T1 ... */ \
     { \
     }
@@ -118,7 +116,10 @@
         } \
         ~BOOST_PP_CAT(CallBackF, n)() /* ~CallBackF0() */ \
         { \
-            callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
+            if (!dismissed) \
+            { \
+                callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
+            } \
         } \
         CB callback; \
         BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_VALUE, T) /* T0& T0_; T1& T1_; ... */ \
@@ -137,14 +138,17 @@
         } \
         ~BOOST_PP_CAT(CallBackT, n)() /* ~CallBackT0() */ \
         { \
-            result.get() = callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
+            if (!dismissed) \
+            { \
+                result.get() = callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
+            } \
         } \
         CB callback; \
         boost::reference_wrapper<R> result; \
         BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_VALUE, T) /* T0 T0_; T1 T1_; ... */ \
     };
 #endif // !SCOPE_GUARD_CALLBACK
-#endif // !SCOPE_GUARD_HAS_CXX_17
+#endif // !SCOPE_GUARD_HAS_CXX_11
 
 #endif // !MARCO_H
 

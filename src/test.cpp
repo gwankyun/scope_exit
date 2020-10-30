@@ -79,5 +79,14 @@ TEST_CASE("ScopeGuard", "[]")
             });
     }
     REQUIRE(n == 6);
+
+    {
+        ScopeGuard set7([&n]()
+            {
+                n = 7;
+            });
+        set7.release();
+    }
+    REQUIRE(n == 6);
 }
 

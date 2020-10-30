@@ -29,13 +29,14 @@ public:
 #endif // FEATURE_COMPILER_CXX_STRONG_ENUMS
 
 #if SCOPE_GUARD_HAS_CXX_11
-    template<typename R, typename CB, typename ...Args>
+    template<typename R,
+        typename CB,
+        typename ...Args>
     explicit ScopeGuard(
         std::reference_wrapper<R> result,
         CB callback,
         Args&&... args)
-        : dismissed(false)
-        , base(onDestroy([result, callback, &args...]()
+        : base(onDestroy([result, callback, &args...]()
             {
                 result.get() = callback(std::forward<Args>(args)...);
             }))
@@ -46,8 +47,7 @@ public:
     explicit ScopeGuard(
         CB callback,
         Args&&... args)
-        : dismissed(false)
-        , base(onDestroy([callback, &args...]()
+        : base(onDestroy([callback, &args...]()
             {
                 callback(std::forward<Args>(args)...);
             }))
@@ -60,8 +60,7 @@ public:
 
     template<typename T>
     explicit ScopeGuard(Type type, T*& value_)
-        : dismissed(false)
-        , base(new Ptr<T>(type, value_))
+        : base(new Ptr<T>(type, value_))
     {
     }
 
@@ -72,18 +71,15 @@ public:
 
     void release() NOEXCEPT
     {
-        dismissed = true;
+        base->dismissed = true;
     }
 
     void reset() NOEXCEPT
     {
-        if (!dismissed)
+        if (base != NULLPTR)
         {
-            if (base != NULLPTR)
-            {
-                delete base;
-                base = NULLPTR;
-            }
+            delete base;
+            base = NULLPTR;
         }
     }
 
@@ -94,8 +90,9 @@ private:
 
     struct Base
     {
-        Base() {}
+        Base(): dismissed(false) {}
         virtual ~Base() {}
+        bool dismissed;
     };
 
 #if SCOPE_GUARD_HAS_CXX_11
@@ -109,7 +106,10 @@ private:
 
         ~CallBack()
         {
-            fn();
+            if (!dismissed)
+            {
+                fn();
+            }
         }
 
         Fn fn;
@@ -136,7 +136,7 @@ private:
 
         ~Ptr()
         {
-            if (value != NULLPTR)
+            if (!dismissed && value != NULLPTR)
             {
                 switch (type)
                 {
@@ -159,7 +159,6 @@ private:
         Type type;
     };
 
-    bool dismissed;
     Base* base;
 };
 

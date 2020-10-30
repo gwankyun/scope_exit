@@ -2,73 +2,103 @@
 
 資源釋放助手類，支持`lambda`、指針、數組指針及自定義函數。
 
+## 指针
+
 ```c++
-#include <ScopeGuard/ScopeGuard.hpp>
-
-class Object
+auto p = new int(0);
 {
-public:
-    Object() : value(0)
-    {
-    }
+    ON_SCOPE_EXIT(ScopeGuard::Delete, p);
+}
+assert(p == nullptr);
+```
 
-    Object(int value_) : value(value_)
-    {
-    }
+## 數組指針
 
-    ~Object()
-    {
-        std::cout << __func__ << ":" << value << std::endl;
-    }
-
-private:
-    int value;
-};
-
-void deleteObject(Object*& obj)
+```c++
+auto a = new int[10](0);
 {
-    delete obj;
-    obj = NULL;
+    ON_SCOPE_EXIT(ScopeGuard::DeleteArray, a);
+}
+assert(a == nullptr);
+```
+
+## lambda
+
+```c++
+int n = 0;
+{
+    ON_SCOPE_EXIT([&n]()
+        {
+            n = 1;
+        });
+}
+assert(n == 1);
+```
+
+## 函數指針
+
+```c++
+void set(int& n, int m)
+{
+    n = m;
 }
 
-void bye()
+int n = 0;
 {
-    std::cout << __func__ << std::endl;
+    ON_SCOPE_EXIT(set, n, 1);
+}
+assert(n == 1);
+```
+
+注意C++11之前传引用要使用`boost::ref`，即上面需改為：
+
+```c++
+ON_SCOPE_EXIT(set, boost::ref(n), 1);
+```
+
+不可變引用需用`boost::cref`，C++11後使用無需。
+
+## 函數返回值
+
+```c++
+int add(int a, int b)
+{
+    return a + b;
 }
 
-ON_SCOPE_EXIT([]()
+int n = 0;
 {
-    std::cout << "exit" << std::endl;
-});
-
-{
-    ON_SCOPE_EXIT(bye);
+    ON_SCOPE_EXIT(std::ref(n), add, 1, 2);
 }
+assert(n == 3);
+```
 
-auto obj1 = new Object(1);
-auto obj2 = new Object(2);
+此處的`std::ref`或`boost::ref`不可缺，可用`SCOPE_GUARD_REF`宏來作兼容，同理還有`SCOPE_GUARD_CREF`。
 
+## 提前執行
+
+```c++
+int n = 0;
 {
-    ON_SCOPE_EXIT(deleteObject, obj1);
-}
-
-{
-    ON_SCOPE_EXIT(ScopeGuard::Delete, obj2);
-}
-
-if (obj1 == NULL)
-{
-    std::cout << "obj1 NULL" << std::endl;
-}
-
-if (obj2 == NULL)
-{
-    std::cout << "obj2 NULL" << std::endl;
-}
-
-{
-    auto objArray = new Object[3];
-    ON_SCOPE_EXIT(ScopeGuard::DeleteArray, objArray);
+    ScopeGuard set1([&n]()
+        {
+            n = 1;
+        });
+    set1.reset();
+    assert(n == 1);
 }
 ```
 
+## 取消
+
+```c++
+int n = 0;
+{
+    ScopeGuard set1([&n]()
+        {
+            n = 1;
+        });
+    set1.release();
+}
+assert(n == 0);
+```

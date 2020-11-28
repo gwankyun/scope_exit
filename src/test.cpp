@@ -89,4 +89,3 @@ TEST_CASE("ScopeGuard", "[]")
     }
     REQUIRE(n == 6);
 }
-

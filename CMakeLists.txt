@@ -1,5 +1,5 @@
 ﻿# cmake最低版本
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.19)
 
 # 啟用IDE目錄功能
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -15,8 +15,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 # 項目名
 project(ScopeGuard)
 
-add_compile_options(
-  "$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP;/Zc:__cplusplus;>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP;/Zc:__cplusplus;>")
+add_compile_definitions("SCOPE_GUARD_HAS_CXX_11=0")
 
 set(ScopeGuard_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(ScopeGuard REQUIRED)
@@ -30,6 +30,7 @@ target_sources(${ScopeGuard}
     src/main.cpp
     include/ScopeGuard.hpp
     include/ScopeGuard/marco.hpp
+    cmake/FindScopeGuard.cmake
 )
 
 # 引用庫
@@ -54,4 +55,3 @@ if(Catch2_FOUND)
       ScopeGuard::ScopeGuard Catch2::Catch2)
   target_compile_features(${test} PRIVATE cxx_std_17)
 endif()
-

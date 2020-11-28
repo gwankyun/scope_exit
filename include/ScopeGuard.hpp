@@ -175,4 +175,3 @@ private:
 #endif // !ON_SCOPE_EXIT
 
 #endif // !SCOPE_GUARD_HPP
-

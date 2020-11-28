@@ -65,27 +65,31 @@
 #  define SCOPE_GUARD_TYPE(z, n, x) , x##n
 #endif // !SCOPE_GUARD_TYPE
 
+//#ifndef BOOST_PP_REPEAT_Z
+//#  define BOOST_PP_REPEAT_Z(z) BOOST_PP_REPEAT_##z
+//#endif // !BOOST_PP_REPEAT_Z
+
 #ifndef BOOST_PP_REPEAT_Z
-#  define BOOST_PP_REPEAT_Z(z) BOOST_PP_REPEAT_##z
+#  define BOOST_PP_REPEAT_Z(z, n, f, x)  BOOST_PP_REPEAT_##z(n, f, x)
 #endif // !BOOST_PP_REPEAT_Z
 
 #ifndef SCOPE_GUARD
 #define SCOPE_GUARD(z, n, _) \
-    template<typename R, typename CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
+    template<typename R, typename CB BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
     explicit ScopeGuard( \
         boost::reference_wrapper<R> result, \
         CB callback_ \
-        BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
-        : base(new BOOST_PP_CAT(CallBackT, n)<R, CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
-            (result, callback_ BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_ARGUMENT, T))) /* , _T0, _T1 ... */ \
+        BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
+        : base(new BOOST_PP_CAT(CallBackT, n)<R, CB BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
+            (result, callback_ BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_ARGUMENT, T))) /* , _T0, _T1 ... */ \
     { \
     } \
-    template<typename CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
+    template<typename CB BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
     explicit ScopeGuard( \
         CB callback_ \
-        BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
-        : base(new BOOST_PP_CAT(CallBackF, n)<CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
-            (callback_ BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_ARGUMENT, T))) /* , _T0, _T1 ... */ \
+        BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
+        : base(new BOOST_PP_CAT(CallBackF, n)<CB BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_TYPE, T)> /* , T0, T1 ... */ \
+            (callback_ BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_ARGUMENT, T))) /* , _T0, _T1 ... */ \
     { \
     }
 #endif // !SCOPE_GUARD
@@ -104,35 +108,35 @@
 
 #ifndef SCOPE_GUARD_CALLBACK
 #define SCOPE_GUARD_CALLBACK(z, n, _) \
-    template<typename CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
+    template<typename CB BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
     struct BOOST_PP_CAT(CallBackF, n) : public Base /* CallBackF0() */ \
     { \
         BOOST_PP_CAT(CallBackF, n)( \
             CB callback_ \
-            BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
+            BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
             : callback(callback_) \
-            BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_INIT, T) /* , T0_(_T0), T1_(_T1) ... */ \
+            BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_INIT, T) /* , T0_(_T0), T1_(_T1) ... */ \
         { \
         } \
         ~BOOST_PP_CAT(CallBackF, n)() /* ~CallBackF0() */ \
         { \
             if (!dismissed) \
             { \
-                callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
+                callback(BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
             } \
         } \
         CB callback; \
-        BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_VALUE, T) /* T0& T0_; T1& T1_; ... */ \
+        BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_VALUE, T) /* T0& T0_; T1& T1_; ... */ \
     }; \
-    template<typename R, typename CB BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
+    template<typename R, typename CB BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_TYPENAME, T)> /* , typename T0, typename T1 ... */ \
     struct BOOST_PP_CAT(CallBackT, n) : public Base /* CallBackT0() */ \
     { \
         BOOST_PP_CAT(CallBackT, n)( \
             boost::reference_wrapper<R> result_, \
             CB callback_ \
-            BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
+            BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_PARAMETER, T)) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
             : callback(callback_) \
-            BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_INIT, T) /* , T0_(_T0), T1_(_T1) ... */ \
+            BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_INIT, T) /* , T0_(_T0), T1_(_T1) ... */ \
             , result(result_) \
         { \
         } \
@@ -140,15 +144,14 @@
         { \
             if (!dismissed) \
             { \
-                result.get() = callback(BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
+                result.get() = callback(BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_CALL_VALUE, T)); /* , T0_, T1_ ... */ \
             } \
         } \
         CB callback; \
         boost::reference_wrapper<R> result; \
-        BOOST_PP_REPEAT_Z(z)(n, SCOPE_GUARD_VALUE, T) /* T0 T0_; T1 T1_; ... */ \
+        BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_VALUE, T) /* T0 T0_; T1 T1_; ... */ \
     };
 #endif // !SCOPE_GUARD_CALLBACK
 #endif // !SCOPE_GUARD_HAS_CXX_11
 
 #endif // !MARCO_H
-

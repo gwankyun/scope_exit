@@ -5,7 +5,10 @@ cmake_minimum_required(VERSION 3.19)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # 包括模板
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH
+  ${CMAKE_MODULE_PATH}
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
 include(CMakePrintHelpers)
 
 # 輸出目錄

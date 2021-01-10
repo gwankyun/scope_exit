@@ -2,7 +2,7 @@
 #ifndef MARCO_H
 #define MARCO_H
 #include "ScopeGuard/compiler_detection/short.hpp"
-#include "ScopeGuard/boost/core/ref.hpp"
+#include <boost/core/ref.hpp>
 #include <boost/utility/result_of.hpp>
 
 #ifndef UNIQUE_ID
@@ -72,24 +72,6 @@
             >(callback_ BOOST_PP_COMMA_REPEAT_ARGUMENT(z, n, T))) \
     { \
     }
-
-    //template<typename R, typename CB BOOST_PP_COMMA_REPEAT_TYPENAME(z, n, T)> /* , typename T0, typename T1 ... */ \
-    //explicit ScopeGuard( \
-    //    boost::reference_wrapper<R> result, \
-    //    CB callback_ \
-    //    BOOST_PP_COMMA_REPEAT_PARAMETER(z, n, T)) \
-    //    : base(new BOOST_PP_CAT(CallBackT, n)<R, CB BOOST_PP_COMMA_REPEAT_TYPE(z, n, T)> /* , T0, T1 ... */ \
-    //        (result, callback_, boost::tuple<BOOST_PP_REPEAT_TYPE(z, n, T)>(BOOST_PP_REPEAT_ARGUMENT(z, n, T)))) \
-    //{ \
-    //} \
-    //template<typename CB BOOST_PP_COMMA_REPEAT_TYPENAME(z, n, T)> /* , typename T0, typename T1 ... */ \
-    //explicit ScopeGuard( \
-    //    CB callback_ \
-    //    BOOST_PP_COMMA_REPEAT_PARAMETER(z, n, T)) \
-    //    : base(new BOOST_PP_CAT(CallBackF, n)<CB BOOST_PP_COMMA_REPEAT_TYPE(z, n, T)> /* , T0, T1 ... */ \
-    //        (callback_, boost::tuple<BOOST_PP_REPEAT_TYPE(z, n, T)>(BOOST_PP_REPEAT_ARGUMENT(z, n, T)))) \
-    //{ \
-    //}
 #  endif // !SCOPE_GUARD
 
 #  ifndef SCOPE_GUARD_INIT
@@ -149,49 +131,6 @@
         boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT_TYPE(z, n, T))>::type> result; \
         BOOST_PP_REPEAT_Z(z, n, SCOPE_GUARD_VALUE, T) /* T0 T0_; T1 T1_; ... */ \
     };
-
-    //template<typename CB BOOST_PP_COMMA_REPEAT_TYPENAME(z, n, T)> /* , typename T0, typename T1 ... */ \
-    //struct BOOST_PP_CAT(CallBackF, n) : public Base /* CallBackF0() */ \
-    //{ \
-    //    BOOST_PP_CAT(CallBackF, n)( \
-    //        CB callback_, \
-    //        boost::tuple<BOOST_PP_REPEAT_TYPE(z, n, T)> tuple_) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
-    //        : callback(callback_) \
-    //        , tuple_d(tuple_) \
-    //    { \
-    //    } \
-    //    ~BOOST_PP_CAT(CallBackF, n)() /* ~CallBackF0() */ \
-    //    { \
-    //        if (!dismissed) \
-    //        { \
-    //            lite::apply(callback, tuple_d); \
-    //        } \
-    //    } \
-    //    CB callback; \
-    //    boost::tuple<BOOST_PP_REPEAT_TYPE(z, n, T)> tuple_d; \
-    //}; \
-    //template<typename R, typename CB BOOST_PP_COMMA_REPEAT_TYPENAME(z, n, T)> /* , typename T0, typename T1 ... */ \
-    //struct BOOST_PP_CAT(CallBackT, n) : public Base /* CallBackF0() */ \
-    //{ \
-    //    BOOST_PP_CAT(CallBackT, n)(\
-    //        boost::reference_wrapper<R> result_, \
-    //        CB callback_, \
-    //        boost::tuple<BOOST_PP_REPEAT_TYPE(z, n, T)> tuple_) /* , SCOPE_GUARD_ARG(T0) _T0, SCOPE_GUARD_ARG(T1) _T1 ... */ \
-    //    : callback(callback_) \
-    //    , tuple_d(tuple_) \
-    //    { \
-    //    } \
-    //    ~BOOST_PP_CAT(CallBackT, n)() /* ~CallBackT0() */ \
-    //    { \
-    //        if (!dismissed) \
-    //        { \
-    //            result.get() = lite::apply(callback, tuple_d); \
-    //        } \
-    //    } \
-    //    CB callback; \
-    //    boost::reference_wrapper<R> result; \
-    //    boost::tuple<BOOST_PP_REPEAT_TYPE(z, n, T)> tuple_d; \
-    //};
 #  endif // !SCOPE_GUARD_CALLBACK
 #endif // !SCOPE_GUARD_HAS_CXX_11
 

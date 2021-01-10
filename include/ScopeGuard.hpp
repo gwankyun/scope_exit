@@ -4,15 +4,15 @@
 #include <utility> // std::move std::forward
 #include <functional>
 #include <cassert>
-#include "ScopeGuard/has_include.hpp"
+#include <has_include.hpp>
 
-#if __HAS_INCLUDE(tuple)
+#if HAS_INCLUDE(tuple)
 #  include <tuple> // std::tuple std::apply std::forward_as_tuple
-#endif // __HAS_INCLUDE(tuple)
+#endif // HAS_INCLUDE(tuple)
 
-#if __HAS_INCLUDE(type_traits)
+#if HAS_INCLUDE(type_traits)
 #  include <type_traits> // std::true_type std::false_type std::is_function
-#endif // __HAS_INCLUDE(type_traits)
+#endif // HAS_INCLUDE(type_traits)
 
 #include "ScopeGuard/marco.hpp"
 
@@ -55,6 +55,12 @@ public:
     }
 
 #else
+    //template<typename CB>
+    //explicit ScopeGuard(
+    //    boost::reference_wrapper<typename boost::result_of<CB()>::type> result,
+    //    CB callback_)
+    //{
+    //}
     BOOST_PP_REPEAT(10, SCOPE_GUARD, _)
 #endif // SCOPE_GUARD_HAS_CXX_11
 

@@ -32,7 +32,6 @@ target_sources(${ScopeGuard}
   PRIVATE
     src/main.cpp
     include/ScopeGuard.hpp
-    include/ScopeGuard/marco.hpp
     cmake/FindScopeGuard.cmake
 )
 

@@ -5,6 +5,26 @@
 #include <functional>
 #include <cassert>
 #include <has_include.hpp>
+#include "ScopeGuard/compiler_detection/short.hpp"
+#include <boost/core/ref.hpp>
+#include <boost/utility/result_of.hpp>
+#include <preprocessor.hpp>
+
+#ifndef UNIQUE_ID
+#  if defined(__COUNTER__) && (__COUNTER__ + 1 == __COUNTER__ + 0)
+#    define UNIQUE_ID __COUNTER__
+#  else
+#    define UNIQUE_ID __LINE__
+#  endif // defined(__COUNTER__) && (__COUNTER__ + 1 == __COUNTER__ + 0)
+#endif // !UNIQUE_ID
+
+#ifndef UNIQUE_NAME_CAT
+#  define UNIQUE_NAME_CAT(name, unique) name##unique
+#endif // !UNIQUE_NAME_CAT
+
+#ifndef UNIQUE_NAME
+#  define UNIQUE_NAME(name, unique) UNIQUE_NAME_CAT(name, unique)
+#endif // !SCOPE_GUARD_UNIQUE_NAME
 
 #if HAS_INCLUDE(tuple)
 #  include <tuple> // std::tuple std::apply std::forward_as_tuple
@@ -14,7 +34,8 @@
 #  include <type_traits> // std::true_type std::false_type std::is_function
 #endif // HAS_INCLUDE(type_traits)
 
-#include "ScopeGuard/marco.hpp"
+//#include "ScopeGuard/marco.hpp"
+#include <apply.hpp>
 
 class ScopeGuard
 {
@@ -55,13 +76,198 @@ public:
     }
 
 #else
-    //template<typename CB>
-    //explicit ScopeGuard(
-    //    boost::reference_wrapper<typename boost::result_of<CB()>::type> result,
-    //    CB callback_)
-    //{
-    //}
-    BOOST_PP_REPEAT(10, SCOPE_GUARD, _)
+    template<typename CB, typename T0>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(T0)>::type> result,
+        CB callback,
+        T0 T0_)
+        : base(new CallBackT1(result, callback, boost::tuple<T0>(T0_)))
+    {
+    }
+
+    template<typename CB, typename T0>
+    explicit ScopeGuard(
+        CB callback,
+        T0 T0_)
+        : base(new CallBackF1(callback, boost::tuple<T0>(T0_)))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(2, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T))>::type> result,
+        CB callback,
+        BOOST_PP_REPEAT(2, BOOST_PP_PARAMETER, T))
+        : base(new CallBackT2(
+            result,
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(2, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(2, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        CB callback,
+        BOOST_PP_REPEAT(2, BOOST_PP_PARAMETER, T))
+        : base(new CallBackF2(
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(2, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(3, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T))>::type> result,
+        CB callback,
+        BOOST_PP_REPEAT(3, BOOST_PP_PARAMETER, T))
+        : base(new CallBackT3(
+            result,
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(3, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(3, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        CB callback,
+        BOOST_PP_REPEAT(3, BOOST_PP_PARAMETER, T))
+        : base(new CallBackF3(
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(3, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(4, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T))>::type> result,
+        CB callback,
+        BOOST_PP_REPEAT(4, BOOST_PP_PARAMETER, T))
+        : base(new CallBackT4(
+            result,
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(4, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(4, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        CB callback,
+        BOOST_PP_REPEAT(4, BOOST_PP_PARAMETER, T))
+        : base(new CallBackF4(
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(4, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(5, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T))>::type> result,
+        CB callback,
+        BOOST_PP_REPEAT(5, BOOST_PP_PARAMETER, T))
+        : base(new CallBackT5(
+            result,
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(5, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(5, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        CB callback,
+        BOOST_PP_REPEAT(5, BOOST_PP_PARAMETER, T))
+        : base(new CallBackF5(
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(5, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(6, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T))>::type> result,
+        CB callback,
+        BOOST_PP_REPEAT(6, BOOST_PP_PARAMETER, T))
+        : base(new CallBackT6(
+            result,
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(6, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(6, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        CB callback,
+        BOOST_PP_REPEAT(6, BOOST_PP_PARAMETER, T))
+        : base(new CallBackF6(
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(6, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(7, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T))>::type> result,
+        CB callback,
+        BOOST_PP_REPEAT(7, BOOST_PP_PARAMETER, T))
+        : base(new CallBackT7(
+            result,
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(7, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(7, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        CB callback,
+        BOOST_PP_REPEAT(7, BOOST_PP_PARAMETER, T))
+        : base(new CallBackF7(
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(7, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(8, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T))>::type> result,
+        CB callback,
+        BOOST_PP_REPEAT(8, BOOST_PP_PARAMETER, T))
+        : base(new CallBackT8(
+            result,
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(8, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(8, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        CB callback,
+        BOOST_PP_REPEAT(8, BOOST_PP_PARAMETER, T))
+        : base(new CallBackF8(
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(8, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(9, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T))>::type> result,
+        CB callback,
+        BOOST_PP_REPEAT(9, BOOST_PP_PARAMETER, T))
+        : base(new CallBackT9(
+            result,
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(9, BOOST_PP_ARGUMENT, T))))
+    {
+    }
+
+    template<typename CB, BOOST_PP_REPEAT(9, BOOST_PP_TYPENAME, T)>
+    explicit ScopeGuard(
+        CB callback,
+        BOOST_PP_REPEAT(9, BOOST_PP_PARAMETER, T))
+        : base(new CallBackF9(
+            callback,
+            boost::tuple<BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T)>(BOOST_PP_REPEAT(9, BOOST_PP_ARGUMENT, T))))
+    {
+    }
 #endif // SCOPE_GUARD_HAS_CXX_11
 
     template<typename T>
@@ -128,7 +334,374 @@ private:
     };
 
 #else
-    BOOST_PP_REPEAT(10, SCOPE_GUARD_CALLBACK, _)
+    template<typename CB, typename T0>
+    class CallBackT1 : public Base
+    {
+    public:
+        CallBackT1(
+            boost::reference_wrapper<typename boost::result_of<CB(T0)>::type> result,
+            CB callback,
+            boost::tuple<T0> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT1()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(T0)>::type> result_;
+        CB callback_;
+        boost::tuple<T0> tuple_;
+    };
+
+    template<typename CB, typename T0>
+    class CallBackF1 : public Base
+    {
+    public:
+        CallBackF1(
+            CB callback,
+            boost::tuple<T0> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF1()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<T0> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(2, BOOST_PP_TYPENAME, T)>
+    class CallBackT2 : public Base
+    {
+    public:
+        CallBackT2(
+            boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T))>::type> result,
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T)> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT2()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T))>::type> result_;
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(2, BOOST_PP_TYPENAME, T)>
+    class CallBackF2 : public Base
+    {
+    public:
+        CallBackF2(
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T)> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF2()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(2, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(3, BOOST_PP_TYPENAME, T)>
+    class CallBackT3 : public Base
+    {
+    public:
+        CallBackT3(
+            boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T))>::type> result,
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T)> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT3()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T))>::type> result_;
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(3, BOOST_PP_TYPENAME, T)>
+    class CallBackF3 : public Base
+    {
+    public:
+        CallBackF3(
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T)> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF3()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(3, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(4, BOOST_PP_TYPENAME, T)>
+    class CallBackT4 : public Base
+    {
+    public:
+        CallBackT4(
+            boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T))>::type> result,
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T)> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT4()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T))>::type> result_;
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(4, BOOST_PP_TYPENAME, T)>
+    class CallBackF4 : public Base
+    {
+    public:
+        CallBackF4(
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T)> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF4()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(4, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(5, BOOST_PP_TYPENAME, T)>
+    class CallBackT5 : public Base
+    {
+    public:
+        CallBackT5(
+            boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T))>::type> result,
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T)> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT5()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T))>::type> result_;
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(5, BOOST_PP_TYPENAME, T)>
+    class CallBackF5 : public Base
+    {
+    public:
+        CallBackF5(
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T)> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF5()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(5, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(6, BOOST_PP_TYPENAME, T)>
+    class CallBackT6 : public Base
+    {
+    public:
+        CallBackT6(
+            boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T))>::type> result,
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T)> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT6()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T))>::type> result_;
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(6, BOOST_PP_TYPENAME, T)>
+    class CallBackF6 : public Base
+    {
+    public:
+        CallBackF6(
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T)> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF6()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(6, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(7, BOOST_PP_TYPENAME, T)>
+    class CallBackT7 : public Base
+    {
+    public:
+        CallBackT7(
+            boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T))>::type> result,
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T)> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT7()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T))>::type> result_;
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(7, BOOST_PP_TYPENAME, T)>
+    class CallBackF7 : public Base
+    {
+    public:
+        CallBackF7(
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T)> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF7()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(7, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(8, BOOST_PP_TYPENAME, T)>
+    class CallBackT8 : public Base
+    {
+    public:
+        CallBackT8(
+            boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T))>::type> result,
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T)> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT8()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T))>::type> result_;
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(8, BOOST_PP_TYPENAME, T)>
+    class CallBackF8 : public Base
+    {
+    public:
+        CallBackF8(
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T)> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF8()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(8, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(9, BOOST_PP_TYPENAME, T)>
+    class CallBackT9 : public Base
+    {
+    public:
+        CallBackT9(
+            boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T))>::type> result,
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T)> tpl)
+            : result_(result)
+            , callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackT9()
+        {
+            result_.get() = lite::apply(callback_, tuple_);
+        }
+        boost::reference_wrapper<typename boost::result_of<CB(BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T))>::type> result_;
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T)> tuple_;
+    };
+
+    template<typename CB, BOOST_PP_REPEAT(9, BOOST_PP_TYPENAME, T)>
+    class CallBackF9 : public Base
+    {
+    public:
+        CallBackF9(
+            CB callback,
+            boost::tuple<BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T)> tpl)
+            : callback_(callback)
+            , tuple_(tpl)
+        {
+        }
+        ~CallBackF9()
+        {
+            lite::apply(callback_, tuple_);
+        }
+        CB callback_;
+        boost::tuple<BOOST_PP_REPEAT(9, BOOST_PP_TYPE, T)> tuple_;
+    };
 #endif // SCOPE_GUARD_HAS_CXX_11
 
     template<typename T>

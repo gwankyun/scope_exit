@@ -50,11 +50,13 @@ TEST_CASE("ScopeGuard", "[]")
     REQUIRE(n == 30);
 
     {
+        n = 0;
         ON_SCOPE_EXIT(REF(n), add, a, b);
     }
     REQUIRE(n == 3);
 
     {
+        n = 3;
 #if SCOPE_GUARD_HAS_CXX_11
         ON_SCOPE_EXIT(add_1, n);
 #else
@@ -72,6 +74,7 @@ TEST_CASE("ScopeGuard", "[]")
     }
     REQUIRE(n == 5);
 
+#if SCOPE_GUARD_HAS_CXX_11
     {
         ON_SCOPE_EXIT([&n]()
             {
@@ -88,4 +91,5 @@ TEST_CASE("ScopeGuard", "[]")
         set7.release();
     }
     REQUIRE(n == 6);
+#endif // SCOPE_GUARD_HAS_CXX_11
 }

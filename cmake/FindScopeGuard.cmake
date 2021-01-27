@@ -1,11 +1,14 @@
 ﻿if(ScopeGuard_ROOT)
     set(ScopeGuard_INCLUDE_DIRS
-      ${ScopeGuard_ROOT}/include
-      ${ScopeGuard_ROOT}/include/ScopeGuard)
+      ${ScopeGuard_ROOT}/include)
     if(NOT has_include_ROOT)
       message(FATAL_ERROR "must set has_include_ROOT")
     endif()
     find_package(has_include REQUIRED)
+    if(NOT CompilerDetection_ROOT)
+      message(FATAL_ERROR "must set CompilerDetection_ROOT")
+    endif()
+    find_package(CompilerDetection REQUIRED)
     if(NOT apply_ROOT)
       message(FATAL_ERROR "must set apply_ROOT")
     endif()
@@ -20,7 +23,8 @@
       add_library(ScopeGuard_header_only INTERFACE)
       add_library(ScopeGuard::ScopeGuard ALIAS ScopeGuard_header_only)
       set(ScopeGuard_LIBRARIES
-        ScopeGuard::ScopeGuard apply::apply preprocessor::preprocessor has_include::has_include Boost::headers)
+        ScopeGuard::ScopeGuard apply::apply preprocessor::preprocessor
+        has_include::has_include Boost::headers CompilerDetection::CompilerDetection)
       set_target_properties(ScopeGuard_header_only PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${ScopeGuard_INCLUDE_DIRS}"
         INTERFACE_LINK_LIBRARIES "${ScopeGuard_LIBRARIES}"

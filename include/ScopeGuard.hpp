@@ -5,7 +5,7 @@
 #include <functional>
 #include <cassert>
 #include <has_include.hpp>
-#include "ScopeGuard/compiler_detection/short.hpp"
+#include <compiler_detection/short.hpp>
 #include <boost/core/ref.hpp>
 #include <boost/utility/result_of.hpp>
 #include <preprocessor.hpp>
@@ -34,20 +34,19 @@
 #  include <type_traits> // std::true_type std::false_type std::is_function
 #endif // HAS_INCLUDE(type_traits)
 
-//#include "ScopeGuard/marco.hpp"
 #include <apply.hpp>
 
 class ScopeGuard
 {
 public:
 
-#if FEATURE_COMPILER_CXX_STRONG_ENUMS
+#if SCOPE_GUARD_HAS_CXX_11 && COMPAT_COMPILER_CXX_STRONG_ENUMS
     enum struct Type { Delete = 0, DeleteArray };
     static const Type Delete = Type::Delete;
     static const Type DeleteArray = Type::DeleteArray;
 #else
     enum Type { Delete = 0, DeleteArray };
-#endif // FEATURE_COMPILER_CXX_STRONG_ENUMS
+#endif // SCOPE_GUARD_HAS_CXX_11 && COMPAT_COMPILER_CXX_STRONG_ENUMS
 
 #if SCOPE_GUARD_HAS_CXX_11
     template<typename R,
@@ -707,7 +706,7 @@ private:
     template<typename T>
     struct Ptr : public Base
     {
-        Ptr(const Type& type_, T*& value_)
+        Ptr(Type type_, T*& value_)
             : type(type_)
             , value(value_)
         {

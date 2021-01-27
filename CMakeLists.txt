@@ -19,7 +19,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 project(ScopeGuard)
 
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP;/Zc:__cplusplus;>")
-add_compile_definitions("SCOPE_GUARD_HAS_CXX_11=0")
+add_compile_definitions("SCOPE_GUARD_HAS_CXX_11=1")
 
 set(ScopeGuard_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(ScopeGuard REQUIRED)

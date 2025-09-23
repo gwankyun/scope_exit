@@ -1,18 +1,11 @@
-﻿#include <iostream>
-//#define SCOPE_GUARD_HAS_CXX_11 0
-//#define SCOPE_GUARD_HAS_CXX_17 0
-#include <ScopeGuard.hpp>
+﻿#include <spdlog/spdlog.h>
+#include <scope_exit.h>
 
-int add(int a, int b)
-{
-    return a + b;
-}
+import scope_exit;
 
 int main()
 {
-    int n = 0;
-    //ON_SCOPE_EXIT(ScopeGuard::ref(n), n);
-    std::cout << std::is_function_v<decltype(add)> << std::endl;
+    spdlog::set_pattern("[%C-%m-%d %T.%e] [%^%L%$] [t:%6t] [%-8!!:%4#] %v");
+
     return 0;
 }
-

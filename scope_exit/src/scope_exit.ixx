@@ -1,6 +1,7 @@
-﻿export module scope_exit;
+﻿module;
 
-export
-{
+#define SCOPE_EXIT_MODULE
+
+export module scope_exit;
+
 #include "scope_exit_impl.hpp"
-}

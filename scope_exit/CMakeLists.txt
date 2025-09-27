@@ -7,7 +7,7 @@ target_sources(scope_exit
   PRIVATE
     src/scope_exit_impl.hpp
   PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/scope_exit.h
-    src/scope_exit.hpp
+    scope_exit.h
+    scope_exit.hpp
 )
 target_compile_features(scope_exit PRIVATE cxx_std_23)

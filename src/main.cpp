@@ -3,6 +3,7 @@
 #include <scope_exit/scope_exit.h>
 #include <spdlog/spdlog.h>
 
+import std;
 import scope_exit;
 
 TEST_CASE("labmda", "[scope_exit]")
@@ -35,6 +36,24 @@ TEST_CASE("labmda", "[scope_exit]")
         ON_SCOPE_EXIT(cb3, 1, 2, 3);
     }
     REQUIRE(value == 6);
+
+    auto cb4 = [&](int t1, int t2, int t3, int t4) { value = t1 + t2 + t3 + t4; };
+    {
+        value = 0;
+        ON_SCOPE_EXIT(cb4, 1, 2, 3, 4);
+    }
+    REQUIRE(value == 10);
+}
+
+TEST_CASE("ref", "[scope_exit]")
+{
+    auto value = -1;
+    auto cb1 = [&](int& t1) { t1 = 1; };
+    {
+        value = 0;
+        ON_SCOPE_EXIT(cb1, std::ref(value));
+    }
+    REQUIRE(value == 1);
 }
 
 int main(int _argc, char* _argv[])

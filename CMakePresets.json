@@ -3,14 +3,28 @@
     "configurePresets": [
         {
             "name": "vcpkg",
-            "binaryDir": "${sourceDir}/build",
             "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         },
         {
             "name": "vs2022",
+            "inherits": "vcpkg",
             "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build",
-            "inherits": "vcpkg"
+            "binaryDir": "${sourceDir}/build/msvc"
+        },
+        {
+            "name": "clang",
+            "inherits": "vcpkg",
+            "generator": "Ninja Multi-Config"
+        },
+        {
+            "name": "clang-mingw",
+            "inherits": "clang",
+            "binaryDir": "${sourceDir}/build/clang-mingw",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-mingw-clang-static",
+                "CMAKE_C_COMPILER": "$env{LLVM_MINGW_ROOT}/bin/clang.exe",
+                "CMAKE_CXX_COMPILER": "$env{LLVM_MINGW_ROOT}/bin/clang++.exe"
+            }
         }
     ],
     "buildPresets": [
@@ -22,6 +36,16 @@
         {
             "name": "vs2022",
             "configurePreset": "vs2022",
+            "configuration": "Release"
+        },
+        {
+            "name": "clang-mingw-debug",
+            "configurePreset": "clang-mingw",
+            "configuration": "Debug"
+        },
+        {
+            "name": "clang-mingw",
+            "configurePreset": "clang-mingw",
             "configuration": "Release"
         }
     ]

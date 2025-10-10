@@ -27,7 +27,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
 
       private:
         scope_exit(const scope_exit&);
-        scope_exit& operator=(const scope_exit&);
+        scope_exit& operator=(const scope_exit&)
+        {
+            return *this;
+        }
 
         callback* m_callback;
     };
@@ -88,7 +91,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     {
         struct CB : public scope_exit::callback
         {
-            CB(F _f, T1 _t1, T2 _t2, T3 _t3) : f(_f), t1(_t1), t2(_t2), t3(_t3) {}
+            CB(F _f, T1 _t1, T2 _t2, T3 _t3) //
+                : f(_f), t1(_t1), t2(_t2), t3(_t3)
+            {
+            }
             ~CB()
             {
                 f(t1, t2, t3);
@@ -107,7 +113,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     {
         struct CB : public scope_exit::callback
         {
-            CB(F _f, T1 _t1, T2 _t2, T3 _t3, T4 _t4) : f(_f), t1(_t1), t2(_t2), t3(_t3), t4(_t4) {}
+            CB(F _f, T1 _t1, T2 _t2, T3 _t3, T4 _t4) //
+                : f(_f), t1(_t1), t2(_t2), t3(_t3), t4(_t4)
+            {
+            }
             ~CB()
             {
                 f(t1, t2, t3, t4);

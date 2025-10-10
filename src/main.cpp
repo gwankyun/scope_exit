@@ -5,6 +5,16 @@
 
 import std;
 import scope_exit;
+import scope_exit.ref;
+
+#define LOCAL_FUNCTION_BEGIN(_ret)                                                                                     \
+    struct UNIQUE_NAME(CB_, UNIQUE_ID)                                                                                 \
+    {                                                                                                                  \
+        _ret operator()
+
+#define LOCAL_FUNCTION_END(_name)                                                                                      \
+    }                                                                                                                  \
+    _name
 
 TEST_CASE("labmda", "[scope_exit]")
 {
@@ -52,6 +62,44 @@ TEST_CASE("ref", "[scope_exit]")
     {
         value = 0;
         ON_SCOPE_EXIT(cb1, std::ref(value));
+    }
+    REQUIRE(value == 1);
+}
+
+TEST_CASE("lite::ref", "[scope_exit]")
+{
+    auto value = -1;
+    auto cb1 = [&](int& t1) { t1 = 1; };
+    {
+        value = 0;
+        ON_SCOPE_EXIT(cb1, lite::ref(value));
+    }
+    REQUIRE(value == 1);
+
+    value = -1;
+    struct CB
+    {
+        void operator()(int& t1)
+        {
+            t1 = 1;
+        }
+    } cb2;
+    {
+        value = 0;
+        ON_SCOPE_EXIT(cb2, lite::ref(value));
+    }
+    REQUIRE(value == 1);
+
+    value = -1;
+    LOCAL_FUNCTION_BEGIN(void)(int& t1)
+    {
+        t1 = 1;
+    }
+    LOCAL_FUNCTION_END(cb3);
+
+    {
+        value = 0;
+        ON_SCOPE_EXIT(cb3, lite::ref(value));
     }
     REQUIRE(value == 1);
 }

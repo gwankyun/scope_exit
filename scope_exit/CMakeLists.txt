@@ -4,10 +4,13 @@ target_sources(scope_exit
     FILE_SET cxx_modules TYPE CXX_MODULES
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src # 模塊根目錄
     FILES src/scope_exit.ixx                  # 模塊接口單元
+    FILES src/ref.ixx                  # 模塊接口單元
   PRIVATE
     src/scope_exit_impl.hpp
+    src/ref_impl.hpp
   PUBLIC
     scope_exit.h
     scope_exit.hpp
+    ref.hpp
 )
 target_compile_features(scope_exit PRIVATE cxx_std_23)

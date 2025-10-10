@@ -1,18 +1,24 @@
 {
-    "version": 3,
+    "version": 10,
     "configurePresets": [
         {
             "name": "vcpkg",
+            "hidden": true,
             "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         },
         {
-            "name": "vs2022",
+            "name": "msvc",
             "inherits": "vcpkg",
             "generator": "Visual Studio 17 2022",
             "binaryDir": "${sourceDir}/build/msvc"
         },
         {
+            "name": "m",
+            "inherits": "msvc"
+        },
+        {
             "name": "clang",
+            "hidden": true,
             "inherits": "vcpkg",
             "generator": "Ninja Multi-Config"
         },
@@ -25,18 +31,30 @@
                 "CMAKE_C_COMPILER": "$env{LLVM_MINGW_ROOT}/bin/clang.exe",
                 "CMAKE_CXX_COMPILER": "$env{LLVM_MINGW_ROOT}/bin/clang++.exe"
             }
+        },
+        {
+            "name": "c",
+            "inherits": "clang-mingw"
         }
     ],
     "buildPresets": [
         {
-            "name": "vs2022-debug",
-            "configurePreset": "vs2022",
+            "name": "msvc-debug",
+            "configurePreset": "msvc",
             "configuration": "Debug"
         },
         {
-            "name": "vs2022",
-            "configurePreset": "vs2022",
+            "name": "msvc",
+            "configurePreset": "msvc",
             "configuration": "Release"
+        },
+        {
+            "name": "md",
+            "inherits": "msvc-debug"
+        },
+        {
+            "name": "mr",
+            "inherits": "msvc"
         },
         {
             "name": "clang-mingw-debug",
@@ -45,6 +63,38 @@
         },
         {
             "name": "clang-mingw",
+            "configurePreset": "clang-mingw",
+            "configuration": "Release"
+        },
+        {
+            "name": "cd",
+            "inherits": "clang-mingw-debug"
+        },
+        {
+            "name": "cr",
+            "inherits": "clang-mingw"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "msvc-debug",
+            "configurePreset": "msvc",
+            "configuration": "Debug"
+        },
+        {
+            "name": "msvc",
+            "configurePreset": "msvc",
+            "configuration": "Release"
+        },
+        {
+            "name": "clang-mingw-debug",
+            "hidden": true,
+            "configurePreset": "clang-mingw",
+            "configuration": "Debug"
+        },
+        {
+            "name": "clang-mingw",
+            "hidden": true,
             "configurePreset": "clang-mingw",
             "configuration": "Release"
         }

@@ -1,22 +1,8 @@
 #pragma once
 
-#ifndef SCOPE_EXIT_REF_MODULE_EXPORT
-#  ifdef SCOPE_EXIT_REF_MODULE
-#    define SCOPE_EXIT_REF_MODULE_EXPORT export
-#  else
-#    define SCOPE_EXIT_REF_MODULE_EXPORT
-#  endif // SCOPE_EXIT_REF_MODULE
-#endif   // !SCOPE_EXIT_REF_MODULE_EXPORT
+#include "marco.h"
 
-#ifndef SCOPE_EXIT_REF_MODULE_INLINE
-#  ifdef SCOPE_EXIT_REF_MODULE
-#    define SCOPE_EXIT_REF_MODULE_INLINE
-#  else
-#    define SCOPE_EXIT_REF_MODULE_INLINE inline
-#  endif // SCOPE_EXIT_REF_MODULE
-#endif   // !SCOPE_EXIT_REF_MODULE_INLINE
-
-SCOPE_EXIT_REF_MODULE_EXPORT namespace lite
+SCOPE_EXIT_MODULE_EXPORT namespace lite
 {
     // 引用包装器类模板
     template <typename T>
@@ -65,28 +51,36 @@ SCOPE_EXIT_REF_MODULE_EXPORT namespace lite
 
     // ref函数模板，创建引用包装器
     template <typename T>
-    SCOPE_EXIT_REF_MODULE_INLINE reference_wrapper<T> ref(T & _t)
+    SCOPE_EXIT_MODULE_INLINE //
+        reference_wrapper<T>
+        ref(T & _t)
     {
         return reference_wrapper<T>(_t);
     }
 
     // ref函数的特化，不允许对reference_wrapper使用ref
     template <typename T>
-    SCOPE_EXIT_REF_MODULE_INLINE reference_wrapper<T> ref(reference_wrapper<T> _t)
+    SCOPE_EXIT_MODULE_INLINE //
+        reference_wrapper<T>
+        ref(reference_wrapper<T> _t)
     {
         return _t;
     }
 
     // cref函数模板，创建常量引用包装器
     template <typename T>
-    SCOPE_EXIT_REF_MODULE_INLINE reference_wrapper<const T> cref(const T& _t)
+    SCOPE_EXIT_MODULE_INLINE //
+        reference_wrapper<const T>
+        cref(const T& _t)
     {
         return reference_wrapper<const T>(_t);
     }
 
     // cref函数的特化，不允许对reference_wrapper使用cref
     template <typename T>
-    SCOPE_EXIT_REF_MODULE_INLINE reference_wrapper<const T> cref(reference_wrapper<T> _t)
+    SCOPE_EXIT_MODULE_INLINE //
+        reference_wrapper<const T>
+        cref(reference_wrapper<T> _t)
     {
         return reference_wrapper<const T>(_t.get());
     }

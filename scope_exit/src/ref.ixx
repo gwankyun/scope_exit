@@ -1,6 +1,6 @@
 module;
 
-#define SCOPE_EXIT_REF_MODULE
+#define SCOPE_EXIT_MODULE
 
 export module scope_exit.ref;
 

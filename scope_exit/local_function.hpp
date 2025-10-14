@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "src/unique.h"
 
 #define LOCAL_FUNCTION_BEGIN(_ret) \

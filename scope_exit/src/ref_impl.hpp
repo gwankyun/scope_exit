@@ -1,23 +1,23 @@
-#pragma once
+ï»¿#pragma once
 
 #include "marco.h"
 
 SCOPE_EXIT_MODULE_EXPORT namespace lite
 {
-    // ÒıÓÃ°ü×°Æ÷ÀàÄ£°å
+    // å¼•ç”¨åŒ…è£…å™¨ç±»æ¨¡æ¿
     template <typename T>
     class reference_wrapper
     {
       public:
         typedef T type;
 
-        // ¹¹Ôìº¯Êı£¬½ÓÊÜÒ»¸öÒıÓÃ
+        // æ„é€ å‡½æ•°ï¼Œæ¥å—ä¸€ä¸ªå¼•ç”¨
         explicit reference_wrapper(T& _ref) : m_ptr(&_ref) {}
 
-        // ¸´ÖÆ¹¹Ôìº¯Êı
+        // å¤åˆ¶æ„é€ å‡½æ•°
         reference_wrapper(const reference_wrapper& _other) : m_ptr(_other.m_ptr) {}
 
-        // ¸³Öµ²Ù×÷·û
+        // èµ‹å€¼æ“ä½œç¬¦
         reference_wrapper& operator=(const reference_wrapper& _other)
         {
             if (this != &_other)
@@ -27,29 +27,29 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             return *this;
         }
 
-        // ×ª»»²Ù×÷·û£¬ÔÊĞíÒşÊ½×ª»»»ØÔ­Ê¼ÀàĞÍµÄÒıÓÃ
+        // è½¬æ¢æ“ä½œç¬¦ï¼Œå…è®¸éšå¼è½¬æ¢å›åŸå§‹ç±»å‹çš„å¼•ç”¨
         operator T&() const
         {
             return *m_ptr;
         }
 
-        // »ñÈ¡ÒıÓÃµÄº¯Êı
+        // è·å–å¼•ç”¨çš„å‡½æ•°
         T& get() const
         {
             return *m_ptr;
         }
 
-        // ¼ì²éÊÇ·ñÎª¿Õ£¨×ÜÊÇ·µ»Øfalse£¬ÒòÎªÎÒÃÇ²»Ö§³Ö¿ÕÒıÓÃ£©
+        // æ£€æŸ¥æ˜¯å¦ä¸ºç©ºï¼ˆæ€»æ˜¯è¿”å›falseï¼Œå› ä¸ºæˆ‘ä»¬ä¸æ”¯æŒç©ºå¼•ç”¨ï¼‰
         bool empty() const
         {
             return false;
         }
 
       private:
-        T* m_ptr; // ´æ´¢Ö¸Ïò±»ÒıÓÃ¶ÔÏóµÄÖ¸Õë
+        T* m_ptr; // å­˜å‚¨æŒ‡å‘è¢«å¼•ç”¨å¯¹è±¡çš„æŒ‡é’ˆ
     };
 
-    // refº¯ÊıÄ£°å£¬´´½¨ÒıÓÃ°ü×°Æ÷
+    // refå‡½æ•°æ¨¡æ¿ï¼Œåˆ›å»ºå¼•ç”¨åŒ…è£…å™¨
     template <typename T>
     SCOPE_EXIT_MODULE_INLINE //
         reference_wrapper<T>
@@ -58,7 +58,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         return reference_wrapper<T>(_t);
     }
 
-    // refº¯ÊıµÄÌØ»¯£¬²»ÔÊĞí¶Ôreference_wrapperÊ¹ÓÃref
+    // refå‡½æ•°çš„ç‰¹åŒ–ï¼Œä¸å…è®¸å¯¹reference_wrapperä½¿ç”¨ref
     template <typename T>
     SCOPE_EXIT_MODULE_INLINE //
         reference_wrapper<T>
@@ -67,7 +67,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         return _t;
     }
 
-    // crefº¯ÊıÄ£°å£¬´´½¨³£Á¿ÒıÓÃ°ü×°Æ÷
+    // crefå‡½æ•°æ¨¡æ¿ï¼Œåˆ›å»ºå¸¸é‡å¼•ç”¨åŒ…è£…å™¨
     template <typename T>
     SCOPE_EXIT_MODULE_INLINE //
         reference_wrapper<const T>
@@ -76,7 +76,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         return reference_wrapper<const T>(_t);
     }
 
-    // crefº¯ÊıµÄÌØ»¯£¬²»ÔÊĞí¶Ôreference_wrapperÊ¹ÓÃcref
+    // crefå‡½æ•°çš„ç‰¹åŒ–ï¼Œä¸å…è®¸å¯¹reference_wrapperä½¿ç”¨cref
     template <typename T>
     SCOPE_EXIT_MODULE_INLINE //
         reference_wrapper<const T>

@@ -52,7 +52,6 @@ target_include_directories(test_example PRIVATE ${PROJECT_SOURCE_DIR})
 target_link_libraries(test_example PRIVATE Catch2::Catch2)
 target_compile_features(test_example PRIVATE cxx_std_23)
 
-
 if(MSVC)
   include(CTest)
   include(Catch)

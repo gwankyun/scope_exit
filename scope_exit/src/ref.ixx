@@ -1,4 +1,4 @@
-module;
+﻿module;
 
 #define SCOPE_EXIT_MODULE
 

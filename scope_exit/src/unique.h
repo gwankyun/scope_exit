@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef UNIQUE_ID
 #  if defined(__COUNTER__) && (__COUNTER__ + 1 == __COUNTER__ + 0)

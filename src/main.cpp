@@ -21,6 +21,7 @@ namespace global
         {
             ::global::value += 1;
         }
+        int value;
     };
 
     void set_value(int& _i)

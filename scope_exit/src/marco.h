@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef SCOPE_EXIT_MODULE_EXPORT
 #  ifdef SCOPE_EXIT_MODULE
@@ -28,6 +28,6 @@
 #  ifdef _MSVC_LANG
 #    define CXX_VER _MSVC_LANG
 #  else
-#    define __cplusplus _MSVC_LANG
+#    define CXX_VER __cplusplus
 #  endif // _MSVC_LANG
 #endif   // !CXX_VER

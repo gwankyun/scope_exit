@@ -13,10 +13,6 @@
             "binaryDir": "${sourceDir}/build/msvc"
         },
         {
-            "name": "m",
-            "inherits": "msvc"
-        },
-        {
             "name": "clang",
             "hidden": true,
             "inherits": "vcpkg",
@@ -30,71 +26,32 @@
                 "VCPKG_TARGET_TRIPLET": "x64-mingw-clang-static",
                 "CMAKE_C_COMPILER": "$env{LLVM_MINGW_ROOT}/bin/clang.exe",
                 "CMAKE_CXX_COMPILER": "$env{LLVM_MINGW_ROOT}/bin/clang++.exe"
+            },
+            "environment": {
+                "PATH": "$penv{LLVM_MINGW_ROOT}/bin;$penv{PATH}"
             }
-        },
-        {
-            "name": "c",
-            "inherits": "clang-mingw"
         }
     ],
     "buildPresets": [
         {
-            "name": "msvc-debug",
-            "configurePreset": "msvc",
-            "configuration": "Debug"
-        },
-        {
             "name": "msvc",
             "configurePreset": "msvc",
             "configuration": "Release"
         },
         {
-            "name": "md",
-            "inherits": "msvc-debug"
-        },
-        {
-            "name": "mr",
-            "inherits": "msvc"
-        },
-        {
-            "name": "clang-mingw-debug",
-            "configurePreset": "clang-mingw",
-            "configuration": "Debug"
-        },
-        {
             "name": "clang-mingw",
             "configurePreset": "clang-mingw",
             "configuration": "Release"
-        },
-        {
-            "name": "cd",
-            "inherits": "clang-mingw-debug"
-        },
-        {
-            "name": "cr",
-            "inherits": "clang-mingw"
         }
     ],
     "testPresets": [
         {
-            "name": "msvc-debug",
-            "configurePreset": "msvc",
-            "configuration": "Debug"
-        },
-        {
             "name": "msvc",
             "configurePreset": "msvc",
             "configuration": "Release"
         },
         {
-            "name": "clang-mingw-debug",
-            "hidden": true,
-            "configurePreset": "clang-mingw",
-            "configuration": "Debug"
-        },
-        {
             "name": "clang-mingw",
-            "hidden": true,
             "configurePreset": "clang-mingw",
             "configuration": "Release"
         }

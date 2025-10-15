@@ -3,11 +3,11 @@ target_sources(scope_exit
   PUBLIC
     FILE_SET cxx_modules TYPE CXX_MODULES
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src # 模塊根目錄
-    FILES src/scope_exit.ixx                  # 模塊接口單元
-    FILES src/ref.ixx                         # 模塊接口單元
-    FILES src/deleter.ixx                     # 模塊接口單元
+    FILES                                     # 模塊接口單元
+      src/scope_exit.ixx
+      src/ref.ixx
+      src/deleter.ixx
   PRIVATE
-    src/scope_exit_inc.hpp
     src/scope_exit_impl.hpp
     src/ref_impl.hpp
     src/unique.h

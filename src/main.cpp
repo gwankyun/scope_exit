@@ -48,32 +48,68 @@ TEST_CASE("labmda", "[scope_exit]")
     REQUIRE(value == 1);
 
     {
-        auto cb2 = [&](int t1, int t2) { value = t1 + t2; };
+        auto cb = [&](int t1, int t2) { value = t1 + t2; };
         value = 0;
-        ON_SCOPE_EXIT(cb2, 1, 2);
+        ON_SCOPE_EXIT(cb, 1, 2);
     }
     REQUIRE(value == 3);
 
     {
-        auto cb3 = [&](int t1, int t2, int t3) { value = t1 + t2 + t3; };
+        auto cb = [&](int t1, int t2, int t3) { value = t1 + t2 + t3; };
         value = 0;
-        ON_SCOPE_EXIT(cb3, 1, 2, 3);
+        ON_SCOPE_EXIT(cb, 1, 2, 3);
     }
     REQUIRE(value == 6);
 
     {
-        auto cb4 = [&](int t1, int t2, int t3, int t4) { value = t1 + t2 + t3 + t4; };
+        auto cb = [&](int t1, int t2, int t3, int t4)
+        { value = t1 + t2 + t3 + t4; };
         value = 0;
-        ON_SCOPE_EXIT(cb4, 1, 2, 3, 4);
+        ON_SCOPE_EXIT(cb, 1, 2, 3, 4);
     }
     REQUIRE(value == 10);
 
     {
-        auto cb5 = [&](int t1, int t2, int t3, int t4, int t5) { value = t1 + t2 + t3 + t4 + t5; };
+        auto cb = [&](int t1, int t2, int t3, int t4, int t5)
+        { value = t1 + t2 + t3 + t4 + t5; };
         value = 0;
-        ON_SCOPE_EXIT(cb5, 1, 2, 3, 4, 5);
+        ON_SCOPE_EXIT(cb, 1, 2, 3, 4, 5);
     }
     REQUIRE(value == 15);
+
+    {
+        auto cb = [&](int t1, int t2, int t3, int t4, int t5, int t6)
+        { value = t1 + t2 + t3 + t4 + t5 + t6; };
+        value = 0;
+        ON_SCOPE_EXIT(cb, 1, 2, 3, 4, 5, 6);
+    }
+    REQUIRE(value == 21);
+
+    {
+        auto cb = [&](int t1, int t2, int t3, int t4, int t5, int t6, int t7)
+        { value = t1 + t2 + t3 + t4 + t5 + t6 + t7; };
+        value = 0;
+        ON_SCOPE_EXIT(cb, 1, 2, 3, 4, 5, 6, 7);
+    }
+    REQUIRE(value == 28);
+
+    {
+        auto cb =
+            [&](int t1, int t2, int t3, int t4, int t5, int t6, int t7, int t8)
+        { value = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8; };
+        value = 0;
+        ON_SCOPE_EXIT(cb, 1, 2, 3, 4, 5, 6, 7, 8);
+    }
+    REQUIRE(value == 36);
+
+    {
+        auto cb = [&](int t1, int t2, int t3, int t4, int t5, int t6, int t7,
+                      int t8, int t9)
+        { value = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9; };
+        value = 0;
+        ON_SCOPE_EXIT(cb, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    }
+    REQUIRE(value == 45);
 }
 
 TEST_CASE("ref", "[scope_exit]")

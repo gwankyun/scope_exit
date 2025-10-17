@@ -2,7 +2,7 @@
 Language:        Cpp
 BasedOnStyle:  Microsoft
 AccessModifierOffset: -2
-AlignAfterOpenBracket: Align
+AlignAfterOpenBracket: DontAlign
 AlignArrayOfStructures: None
 AlignConsecutiveAssignments:
   Enabled:         false
@@ -48,7 +48,7 @@ AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakAfterReturnType: None
+BreakAfterReturnType: ExceptShortType
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: Yes
 AttributeMacros:
@@ -86,7 +86,7 @@ BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
 BreakStringLiterals: true
-ColumnLimit:     120
+ColumnLimit:     80
 CommentPragmas:  '^ IWYU pragma:'
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4

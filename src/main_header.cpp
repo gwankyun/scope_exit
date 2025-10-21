@@ -1,5 +1,3 @@
 ﻿#include "main_decl.hpp"
 
-#define MAIN_MODULE
-
 #include "main_impl.hpp"

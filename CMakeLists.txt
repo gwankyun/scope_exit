@@ -33,25 +33,40 @@ endfunction()
 
 enable_module_std(ON)
 
-find_package(spdlog REQUIRED)
 find_package(Catch2 REQUIRED)
 
 add_subdirectory(scope_exit)
 
-add_executable(test_example)
-target_sources(test_example
+add_library(test_interface INTERFACE)
+target_sources(test_interface
+  INTERFACE
+    src/main_decl.hpp
+    src/main_impl.hpp
+)
+target_link_libraries(test_interface
+  INTERFACE
+    Catch2::Catch2
+    scope_exit
+)
+target_include_directories(test_interface INTERFACE ${PROJECT_SOURCE_DIR})
+target_compile_features(test_interface INTERFACE cxx_std_23)
+
+add_executable(test_module)
+target_sources(test_module
   PRIVATE
     src/main.cpp
 )
-target_link_libraries(test_example
+target_link_libraries(test_module PRIVATE test_interface)
+
+add_executable(test_header)
+target_sources(test_header
   PRIVATE
-    spdlog::spdlog
-    scope_exit
+    src/main_header.cpp
 )
-target_include_directories(test_example PRIVATE ${PROJECT_SOURCE_DIR})
-target_link_libraries(test_example PRIVATE Catch2::Catch2)
-target_compile_features(test_example PRIVATE cxx_std_23)
+target_link_libraries(test_header PRIVATE test_interface)
 
 include(CTest)
 include(Catch)
-catch_discover_tests(test_example)
+
+catch_discover_tests(test_module)
+catch_discover_tests(test_header)

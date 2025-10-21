@@ -12,7 +12,9 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         typedef T type;
 
         // 构造函数，接受一个引用
-        explicit reference_wrapper(T& _ref) : m_ptr(&_ref) {}
+        explicit reference_wrapper(T& _ref) : m_ptr(&_ref)
+        {
+        }
 
         // 复制构造函数
         reference_wrapper(const reference_wrapper& _other) : m_ptr(_other.m_ptr)

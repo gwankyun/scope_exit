@@ -2,37 +2,19 @@
 
 #include "marco.h"
 
+#ifdef SCOPE_EXIT_MODULE
+export import scope_exit.base;
+#else
+#  include "scope_exit_base_impl.hpp"
+#endif // SCOPE_EXIT_MODULE
+
 SCOPE_EXIT_MODULE_EXPORT namespace lite
 {
-    struct scope_exit
-    {
-        struct callback
-        {
-            callback() {}
-            virtual ~callback() {}
-        };
-
-        explicit scope_exit(callback* _callback) : m_callback(_callback) {}
-
-        ~scope_exit()
-        {
-            delete m_callback;
-        }
-
-      private:
-        scope_exit(const scope_exit&);
-        scope_exit& operator=(const scope_exit&)
-        {
-            return *this;
-        }
-
-        callback* m_callback;
-    };
-
     template <typename Fn>
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(Fn _f)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _f) : f(_f) {}
             ~CB()
@@ -41,14 +23,15 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             }
             Fn f;
         };
-        scope_exit::callback* cb = new CB(_f);
+        callback* cb = new CB(_f);
         return cb;
     }
 
     template <typename Fn, typename T1>
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(Fn _f, T1 _t1)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _f, T1 _t1) : f(_f), t1(_t1) {}
             ~CB()
@@ -58,7 +41,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             Fn f;
             T1 t1;
         };
-        scope_exit::callback* cb = new CB(_f, _t1);
+        callback* cb = new CB(_f, _t1);
         return cb;
     }
 
@@ -66,7 +49,8 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(Fn _f, T1 _t1,
                                                                  T2 _t2)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _f, T1 _t1, T2 _t2) : f(_f), t1(_t1), t2(_t2) {}
             ~CB()
@@ -77,7 +61,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             T1 t1;
             T2 t2;
         };
-        scope_exit::callback* cb = new CB(_f, _t1, _t2);
+        callback* cb = new CB(_f, _t1, _t2);
         return cb;
     }
 
@@ -85,7 +69,8 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(Fn _f, T1 _t1,
                                                                  T2 _t2, T3 _t3)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _f, T1 _t1, T2 _t2, T3 _t3) : f(_f), t1(_t1), t2(_t2), t3(_t3)
             {
@@ -99,7 +84,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             T2 t2;
             T3 t3;
         };
-        scope_exit::callback* cb = new CB(_f, _t1, _t2, _t3);
+        callback* cb = new CB(_f, _t1, _t2, _t3);
         return cb;
     }
 
@@ -107,7 +92,8 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(
         Fn _f, T1 _t1, T2 _t2, T3 _t3, T4 _t4)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _f, T1 _t1, T2 _t2, T3 _t3, T4 _t4)
                 : f(_f), t1(_t1), t2(_t2), t3(_t3), t4(_t4)
@@ -123,7 +109,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             T3 t3;
             T4 t4;
         };
-        scope_exit::callback* cb = new CB(_f, _t1, _t2, _t3, _t4);
+        callback* cb = new CB(_f, _t1, _t2, _t3, _t4);
         return cb;
     }
 
@@ -132,7 +118,8 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(
         Fn _f, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _f, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5)
                 : f(_f), t1(_t1), t2(_t2), t3(_t3), t4(_t4), t5(_t5)
@@ -149,7 +136,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             T4 t4;
             T5 t5;
         };
-        scope_exit::callback* cb = new CB(_f, _t1, _t2, _t3, _t4, _t5);
+        callback* cb = new CB(_f, _t1, _t2, _t3, _t4, _t5);
         return cb;
     }
 
@@ -158,7 +145,8 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(
         Fn _fn, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5, T6 _t6)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _fn, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5, T6 _t6)
                 : fn(_fn), t1(_t1), t2(_t2), t3(_t3), t4(_t4), t5(_t5), t6(_t6)
@@ -176,7 +164,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             T5 t5;
             T6 t6;
         };
-        scope_exit::callback* cb = new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6);
+        callback* cb = new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6);
         return cb;
     }
 
@@ -185,7 +173,8 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(
         Fn _fn, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5, T6 _t6, T7 _t7)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _fn, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5, T6 _t6, T7 _t7)
                 : fn(_fn), t1(_t1), t2(_t2), t3(_t3), t4(_t4), t5(_t5), t6(_t6),
@@ -205,8 +194,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             T6 t6;
             T7 t7;
         };
-        scope_exit::callback* cb =
-            new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6, _t7);
+        callback* cb = new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6, _t7);
         return cb;
     }
 
@@ -215,7 +203,8 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
     SCOPE_EXIT_MODULE_INLINE scope_exit::callback* make_callback(
         Fn _fn, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5, T6 _t6, T7 _t7, T8 _t8)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _fn, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5, T6 _t6, T7 _t7,
                T8 _t8)
@@ -237,8 +226,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             T7 t7;
             T8 t8;
         };
-        scope_exit::callback* cb =
-            new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8);
+        callback* cb = new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8);
         return cb;
     }
 
@@ -248,7 +236,8 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         Fn _fn, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5, T6 _t6, T7 _t7, T8 _t8,
         T9 _t9)
     {
-        struct CB : public scope_exit::callback
+        typedef scope_exit::callback callback;
+        struct CB : public callback
         {
             CB(Fn _fn, T1 _t1, T2 _t2, T3 _t3, T4 _t4, T5 _t5, T6 _t6, T7 _t7,
                T8 _t8, T9 _t9)
@@ -271,8 +260,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             T8 t8;
             T9 t9;
         };
-        scope_exit::callback* cb =
-            new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9);
+        callback* cb = new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9);
         return cb;
     }
 } // namespace lite

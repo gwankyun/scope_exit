@@ -37,6 +37,31 @@ find_package(Catch2 REQUIRED)
 
 add_subdirectory(scope_exit)
 
+# 添加安裝
+
+install(
+  TARGETS scope_exit
+  EXPORT scope_exitTargets
+  FILE_SET HEADERS
+  FILE_SET cxx_modules DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+include(GNUInstallDirs)
+
+install(
+  EXPORT scope_exitTargets
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/scope_exit
+  NAMESPACE scope_exit::
+)
+
+install(
+  FILES
+    cmake/scope_exitConfig.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/scope_exit
+)
+
+# 添加測試
+
 add_library(test_interface INTERFACE)
 target_sources(test_interface
   INTERFACE

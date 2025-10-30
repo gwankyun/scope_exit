@@ -9,17 +9,20 @@ target_sources(scope_exit
       src/ref.ixx
       src/deleter.ixx
   PRIVATE
-    src/scope_exit_impl.hpp
-    src/scope_exit_base_impl.hpp
-    src/ref_impl.hpp
-    src/unique.h
-    src/marco.h
-    src/deleter_impl.hpp
   PUBLIC
-    scope_exit.h       # 提供宏
-    scope_exit.hpp     # 僅頭庫
-    deleter.hpp        # 提供幾個內存刪除器
-    ref.hpp            # 提供lite::ref和lite:cref
-    local_function.hpp # 提供C++98可用的局部函數
+    FILE_SET HEADERS
+    BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES
+      scope_exit.h       # 提供宏
+      scope_exit.hpp     # 僅頭庫
+      deleter.hpp        # 提供幾個內存刪除器
+      ref.hpp            # 提供lite::ref和lite:cref
+      local_function.hpp # 提供C++98可用的局部函數
+      src/scope_exit_impl.hpp
+      src/scope_exit_base_impl.hpp
+      src/ref_impl.hpp
+      src/unique.h
+      src/marco.h
+      src/deleter_impl.hpp
 )
 target_compile_features(scope_exit PRIVATE cxx_std_23)

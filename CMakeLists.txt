@@ -12,41 +12,23 @@ set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444"
 # 項目名
 project(scope_exit)
 
-# 為目標啟用標準庫模塊
-function(target_enable_module_std tgt enable_std)
-  # 檢查當前C++編譯器是否為Clang或GNU
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    set_target_properties(${tgt}
-      PROPERTIES
-      CXX_MODULE_STD ${enable_std}
-    )
-  endif()
-endfunction()
-
-# 全局啟用標準庫模塊
-function(enable_module_std enable_std)
-  # 檢查當前C++編譯器是否為Clang或GNU
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    set(CMAKE_CXX_MODULE_STD ${enable_std} PARENT_SCOPE)
-  endif()
-endfunction()
+include(cmake/module_std.cmake)
 
 enable_module_std(ON)
 
-find_package(Catch2 REQUIRED)
+find_package(Catch2 CONFIG REQUIRED)
 
 add_subdirectory(scope_exit)
 
-# 添加安裝
+include(GNUInstallDirs)
 
+# 添加安裝
 install(
   TARGETS scope_exit
   EXPORT scope_exitTargets
-  FILE_SET HEADERS
-  FILE_SET cxx_modules DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILE_SET CXX_MODULES DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-
-include(GNUInstallDirs)
 
 install(
   EXPORT scope_exitTargets
@@ -95,3 +77,13 @@ include(Catch)
 
 catch_discover_tests(test_module)
 catch_discover_tests(test_header)
+
+# 生成.clangd配置文件
+add_custom_target(generate_clangd
+  COMMAND ${CMAKE_COMMAND}
+    -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+    -DBINARY_DIR=${CMAKE_BINARY_DIR}
+    -DCONFIG=$<CONFIG>
+    -P ${CMAKE_SOURCE_DIR}/cmake/generate_clangd.cmake
+  COMMENT "生成.clangd配置文件"
+)

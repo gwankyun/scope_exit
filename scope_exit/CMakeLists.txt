@@ -1,7 +1,7 @@
 ﻿add_library(scope_exit)
 target_sources(scope_exit
   PUBLIC
-    FILE_SET cxx_modules TYPE CXX_MODULES
+    FILE_SET CXX_MODULES
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src # 模塊根目錄
     FILES                                     # 模塊接口單元
       src/scope_exit.base.ixx

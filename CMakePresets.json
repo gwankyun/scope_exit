@@ -15,14 +15,21 @@
             "binaryDir": "${sourceDir}/build/msvc17"
         },
         {
-            "name": "msvc",
+            "name": "msvc-v143",
             "description": "Visual Studio 18 2026",
-            "binaryDir": "${sourceDir}/build/msvc",
+            "binaryDir": "${sourceDir}/build/msvc-v143",
             "generator": "Visual Studio 18 2026",
             "toolchainFile": "$env{VCPKG_ROOT_VS17}/scripts/buildsystems/vcpkg.cmake",
             "architecture": "x64",
             "toolset": "v143",
             "$comment": "vcpkg尚未支持VS2026"
+        },
+        {
+            "name": "msvc",
+            "description": "Visual Studio 18 2026",
+            "binaryDir": "${sourceDir}/build/msvc",
+            "generator": "Visual Studio 18 2026",
+            "architecture": "x64"
         },
         {
             "name": "clang",

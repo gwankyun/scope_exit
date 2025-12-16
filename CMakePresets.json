@@ -59,6 +59,11 @@
             "configuration": "Release"
         },
         {
+            "name": "msvc-v143",
+            "configurePreset": "msvc-v143",
+            "configuration": "Release"
+        },
+        {
             "name": "clang-mingw",
             "configurePreset": "clang-mingw",
             "configuration": "Release"
@@ -68,6 +73,11 @@
         {
             "name": "msvc",
             "configurePreset": "msvc",
+            "configuration": "Release"
+        },
+        {
+            "name": "msvc-v143",
+            "configurePreset": "msvc-v143",
             "configuration": "Release"
         },
         {

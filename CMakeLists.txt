@@ -1,18 +1,28 @@
 ﻿# cmake最低版本
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 3.30)
 
 # 包含模塊
 include(CMakePrintHelpers)
 
+# get_import_std enable_module_std target_enable_module_std
+include(cmake/cxx_module.cmake)
+
 # CMake對Clang的import std;支持還在試驗階段
-# 需要設置此UUID，以下值衹保證在[4.1.0, 4.1.2]有效
-set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444"
+# 需要設置此UUID
+get_import_std(import_std_uuid)
+cmake_print_variables(import_std_uuid)
+
+set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD ${import_std_uuid}
   CACHE STRING "UUID for import std")
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
 # 項目名
 project(scope_exit)
 
-include(cmake/module_std.cmake)
+include(cmake/cxx_module.cmake)
 
 enable_module_std(ON)
 
@@ -79,11 +89,13 @@ catch_discover_tests(test_module)
 catch_discover_tests(test_header)
 
 # 生成.clangd配置文件
-add_custom_target(generate_clangd
-  COMMAND ${CMAKE_COMMAND}
-    -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
-    -DBINARY_DIR=${CMAKE_BINARY_DIR}
-    -DCONFIG=$<CONFIG>
-    -P ${CMAKE_SOURCE_DIR}/cmake/generate_clangd.cmake
-  COMMENT "生成.clangd配置文件"
-)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  add_custom_target(generate_clangd
+    COMMAND ${CMAKE_COMMAND}
+      -D SOURCE_DIR=${CMAKE_SOURCE_DIR}
+      -D BINARY_DIR=${CMAKE_BINARY_DIR}
+      -D CONFIG=$<CONFIG>
+      -P ${CMAKE_SOURCE_DIR}/cmake/generate_clangd.cmake
+    COMMENT "生成.clangd配置文件"
+  )
+endif()

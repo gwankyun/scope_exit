@@ -4,30 +4,33 @@
         {
             "name": "vcpkg",
             "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
             "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         },
         {
-            "name": "msvc17",
+            "name": "vcpkg-v143",
+            "hidden": true,
             "inherits": "vcpkg",
+            "toolchainFile": "$env{VCPKG_ROOT_V143}/scripts/buildsystems/vcpkg.cmake"
+        },
+        {
+            "name": "msvc17",
+            "inherits": "vcpkg-v143",
             "generator": "Visual Studio 17 2022",
-            "architecture": "x64",
-            "toolchainFile": "$env{VCPKG_ROOT_VS17}/scripts/buildsystems/vcpkg.cmake",
-            "binaryDir": "${sourceDir}/build/msvc17"
+            "architecture": "x64"
         },
         {
             "name": "msvc-v143",
+            "inherits": "vcpkg-v143",
             "description": "Visual Studio 18 2026",
-            "binaryDir": "${sourceDir}/build/msvc-v143",
             "generator": "Visual Studio 18 2026",
-            "toolchainFile": "$env{VCPKG_ROOT_VS17}/scripts/buildsystems/vcpkg.cmake",
             "architecture": "x64",
-            "toolset": "v143",
-            "$comment": "vcpkg尚未支持VS2026"
+            "toolset": "v143"
         },
         {
             "name": "msvc",
+            "inherits": "vcpkg",
             "description": "Visual Studio 18 2026",
-            "binaryDir": "${sourceDir}/build/msvc",
             "generator": "Visual Studio 18 2026",
             "architecture": "x64"
         },
@@ -40,8 +43,6 @@
         {
             "name": "clang-mingw",
             "inherits": "clang",
-            "binaryDir": "${sourceDir}/build/clang-mingw",
-            "toolchainFile": "$env{VCPKG_ROOT_VS17}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x64-mingw-clang-static",
                 "CMAKE_C_COMPILER": "$env{LLVM_MINGW_ROOT}/bin/clang.exe",
@@ -53,6 +54,11 @@
         }
     ],
     "buildPresets": [
+        {
+            "name": "msvc17",
+            "configurePreset": "msvc17",
+            "configuration": "Release"
+        },
         {
             "name": "msvc",
             "configurePreset": "msvc",
@@ -70,6 +76,11 @@
         }
     ],
     "testPresets": [
+        {
+            "name": "msvc17",
+            "configurePreset": "msvc17",
+            "configuration": "Release"
+        },
         {
             "name": "msvc",
             "configurePreset": "msvc",

@@ -1,14 +1,13 @@
-message(STATUS "CMAKE_SOURCE_DIR: ${SOURCE_DIR}")
-message(STATUS "CMAKE_BINARY_DIR: ${BINARY_DIR}")
-message(STATUS "CONFIG: ${CONFIG}")
+include(CMakePrintHelpers)
 
-set(clang_d "")
-string(APPEND clang_d "CompileFlags:\n")
-string(APPEND clang_d "  CompilationDatabase: build/clang-mingw\n")
-string(APPEND clang_d "  Add:\n")
-string(APPEND clang_d "    - -xc++\n")
-string(APPEND clang_d "    - -std=c++23\n")
-string(APPEND clang_d "    - -stdlib=libc++\n")
+cmake_print_variables(SOURCE_DIR)
+cmake_print_variables(BINARY_DIR)
+cmake_print_variables(CONFIG)
+
+# 讀預設.clangd文件
+file(READ "${SOURCE_DIR}/cmake/.clangd" clang_d)
+
+cmake_print_variables(clang_d)
 
 # 查找${CONFIG}配置下的所有.pcm文件
 file(GLOB_RECURSE pcm_file_list
@@ -20,11 +19,12 @@ if(pcm_file_list)
     string(REGEX MATCH "${CONFIG}/([^/]+)\.pcm$" match_result ${pcm_file})
     if(match_result)
       message(STATUS "found ${pcm_file}")
-      set(clang_d "${clang_d}    - -fmodule-file=${CMAKE_MATCH_1}=${pcm_file}\n")
+      string(APPEND clang_d "    - -fmodule-file=${CMAKE_MATCH_1}=${pcm_file}\n")
     endif()
   endforeach()
 endif()
 
 set(clang_config "${SOURCE_DIR}/.clangd")
 
+# 寫入.clangd配置文件
 file(WRITE "${clang_config}" "${clang_d}")

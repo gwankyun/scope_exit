@@ -7,15 +7,15 @@ include(CMakePrintHelpers)
 # get_import_std enable_module_std target_enable_module_std
 include(cmake/cxx_module.cmake)
 
-# CMake對Clang的import std;支持還在試驗階段
-# 需要設置此UUID
-get_import_std(import_std_uuid)
-cmake_print_variables(import_std_uuid)
-
-set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD ${import_std_uuid}
-  CACHE STRING "UUID for import std")
-
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  # CMake對Clang的import std;支持還在試驗階段
+  # 需要設置此UUID
+  get_import_std(import_std_uuid)
+  cmake_print_variables(import_std_uuid)
+
+  set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD ${import_std_uuid}
+    CACHE STRING "UUID for import std")
+
   set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
@@ -29,6 +29,8 @@ enable_module_std(ON)
 find_package(Catch2 CONFIG REQUIRED)
 
 add_subdirectory(scope_exit)
+
+#[[
 
 include(GNUInstallDirs)
 
@@ -52,6 +54,8 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/scope_exit
 )
 
+#]]
+
 # 添加測試
 
 add_library(test_interface INTERFACE)
@@ -63,7 +67,7 @@ target_sources(test_interface
 target_link_libraries(test_interface
   INTERFACE
     Catch2::Catch2
-    scope_exit
+    # scope_exit
 )
 target_include_directories(test_interface INTERFACE ${PROJECT_SOURCE_DIR})
 target_compile_features(test_interface INTERFACE cxx_std_23)
@@ -73,14 +77,23 @@ target_sources(test_module
   PRIVATE
     src/main.cpp
 )
-target_link_libraries(test_module PRIVATE test_interface)
+target_link_libraries(test_module
+  PRIVATE
+    test_interface
+    scope_exit::module
+    # scope_exit_base
+)
 
 add_executable(test_header)
 target_sources(test_header
   PRIVATE
     src/main_header.cpp
 )
-target_link_libraries(test_header PRIVATE test_interface)
+target_link_libraries(test_header
+  PRIVATE
+    test_interface
+    scope_exit::header_only
+)
 
 include(CTest)
 include(Catch)

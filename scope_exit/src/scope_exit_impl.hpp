@@ -17,7 +17,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         struct CB : public callback
         {
             CB(Fn _f) : f(_f) {}
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 f();
             }
@@ -34,7 +34,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         struct CB : public callback
         {
             CB(Fn _f, T1 _t1) : f(_f), t1(_t1) {}
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 f(t1);
             }
@@ -53,7 +53,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         struct CB : public callback
         {
             CB(Fn _f, T1 _t1, T2 _t2) : f(_f), t1(_t1), t2(_t2) {}
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 f(t1, t2);
             }
@@ -75,7 +75,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             CB(Fn _f, T1 _t1, T2 _t2, T3 _t3) : f(_f), t1(_t1), t2(_t2), t3(_t3)
             {
             }
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 f(t1, t2, t3);
             }
@@ -99,7 +99,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
                 : f(_f), t1(_t1), t2(_t2), t3(_t3), t4(_t4)
             {
             }
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 f(t1, t2, t3, t4);
             }
@@ -125,7 +125,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
                 : f(_f), t1(_t1), t2(_t2), t3(_t3), t4(_t4), t5(_t5)
             {
             }
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 f(t1, t2, t3, t4, t5);
             }
@@ -152,7 +152,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
                 : fn(_fn), t1(_t1), t2(_t2), t3(_t3), t4(_t4), t5(_t5), t6(_t6)
             {
             }
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 fn(t1, t2, t3, t4, t5, t6);
             }
@@ -181,7 +181,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
                   t7(_t7)
             {
             }
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 fn(t1, t2, t3, t4, t5, t6, t7);
             }
@@ -212,7 +212,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
                   t7(_t7), t8(_t8)
             {
             }
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 fn(t1, t2, t3, t4, t5, t6, t7, t8);
             }
@@ -245,7 +245,7 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
                   t7(_t7), t8(_t8), t9(_t9)
             {
             }
-            ~CB()
+            ~CB() CXX_OVERRIDE
             {
                 fn(t1, t2, t3, t4, t5, t6, t7, t8, t9);
             }

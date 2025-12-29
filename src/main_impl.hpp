@@ -8,10 +8,9 @@ import scope_exit;
 import scope_exit.ref;     // lite::ref lite::cref
 import scope_exit.deleter; // lite::delete_ptr lite::delete_array
 #else
-#  include <scope_exit/deleter.hpp>
-#  include <scope_exit/local_function.hpp>
-#  include <scope_exit/ref.hpp>
 #  include <scope_exit/scope_exit.hpp>
+#  include <scope_exit/deleter.hpp>
+#  include <scope_exit/ref.hpp>
 #endif // MAIN_MODULE
 
 namespace global
@@ -25,7 +24,6 @@ namespace global
         {
             ::global::value += 1;
         }
-        int value;
     };
 
     void set_value(int& _i)
@@ -119,17 +117,17 @@ TEST_CASE("labmda", "[scope_exit]")
 TEST_CASE("ref", "[scope_exit]")
 {
     auto value = -1;
-    auto cb1 = [&](int& t1) { t1 = 1; };
+    auto cb = [&](int& t1) { t1 = 1; };
     {
         value = 0;
-        ON_SCOPE_EXIT(cb1, std::ref(value));
+        ON_SCOPE_EXIT(cb, std::ref(value));
     }
     REQUIRE(value == 1);
 }
 
 TEST_CASE("globel function", "[scope_exit]")
 {
-    int value = -1;
+    auto value = -1;
     {
         ON_SCOPE_EXIT(global::set_value, lite::ref(value));
     }
@@ -162,12 +160,12 @@ TEST_CASE("delete_array", "[scope_exit]")
 
 TEST_CASE("lite::ref", "[scope_exit]")
 {
-    int value = -1;
+    auto value = -1;
 
     {
-        auto cb1 = [&](int& t1) { t1 = 1; };
+        auto cb = [&](int& t1) { t1 = 1; };
         value = 0;
-        ON_SCOPE_EXIT(cb1, lite::ref(value));
+        ON_SCOPE_EXIT(cb, lite::ref(value));
     }
     REQUIRE(value == 1);
 
@@ -178,9 +176,9 @@ TEST_CASE("lite::ref", "[scope_exit]")
             {
                 t1 = 1;
             }
-        } cb2;
+        } cb;
         value = 0;
-        ON_SCOPE_EXIT(cb2, lite::ref(value));
+        ON_SCOPE_EXIT(cb, lite::ref(value));
     }
     REQUIRE(value == 1);
 
@@ -189,17 +187,17 @@ TEST_CASE("lite::ref", "[scope_exit]")
         {
             t1 = 1;
         }
-        LOCAL_FUNCTION_END(cb3);
+        LOCAL_FUNCTION_END(cb);
 
         value = 0;
-        ON_SCOPE_EXIT(cb3, lite::ref(value));
+        ON_SCOPE_EXIT(cb, lite::ref(value));
     }
     REQUIRE(value == 1);
 }
 
 TEST_CASE("free_ptr", "[scope_exit]")
 {
-    int* ptr = (int*)malloc(sizeof(int));
+    auto ptr = (int*)malloc(sizeof(int));
     {
         ON_SCOPE_EXIT(
             [&ptr]

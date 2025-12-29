@@ -31,3 +31,15 @@
 #    define CXX_VER __cplusplus
 #  endif // _MSVC_LANG
 #endif   // !CXX_VER
+
+#ifndef CXX_11
+#  define CXX_11 201103L
+#endif
+
+#ifndef CXX_OVERRIDE
+#  if CXX_VER >= CXX_11
+#    define CXX_OVERRIDE override
+#  else
+#    define CXX_OVERRIDE
+#  endif
+#endif

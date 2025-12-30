@@ -13,6 +13,7 @@ target_sources(scope_exit_base
       src/marco.h
       src/deleter_impl.hpp
 )
+target_include_directories(scope_exit_base INTERFACE ${PROJECT_SOURCE_DIR})
 add_library(scope_exit::base ALIAS scope_exit_base)
 
 add_library(scope_exit_header_only INTERFACE)

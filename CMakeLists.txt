@@ -61,34 +61,23 @@ install(
 add_library(test_interface INTERFACE)
 target_sources(test_interface
   INTERFACE
-    src/main_decl.hpp
-    src/main_impl.hpp
+    src/main.cpp
 )
 target_link_libraries(test_interface
   INTERFACE
     Catch2::Catch2
-    # scope_exit
 )
-target_include_directories(test_interface INTERFACE ${PROJECT_SOURCE_DIR})
-target_compile_features(test_interface INTERFACE cxx_std_23)
 
 add_executable(test_module)
-target_sources(test_module
-  PRIVATE
-    src/main.cpp
-)
+target_compile_definitions(test_module PRIVATE MAIN_MODULE)
 target_link_libraries(test_module
   PRIVATE
     test_interface
     scope_exit::module
-    # scope_exit_base
 )
+target_compile_features(test_module PRIVATE cxx_std_23)
 
 add_executable(test_header)
-target_sources(test_header
-  PRIVATE
-    src/main_header.cpp
-)
 target_link_libraries(test_header
   PRIVATE
     test_interface

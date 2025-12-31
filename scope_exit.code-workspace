@@ -17,6 +17,10 @@
 			"--log=verbose",
 			"--experimental-modules-support"
 		],
+		"clangd.fallbackFlags": [
+			"-I${workspaceFolder}",
+			"-I${env:VCPKG_ROOT}/installed/x64-mingw-clang-static/include"
+		],
 		"files.associations": {
 			"*.ixx": "cpp",
 			"*.cppm": "cpp",

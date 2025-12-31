@@ -3,28 +3,26 @@ cmake_minimum_required(VERSION 3.30)
 
 # 包含模塊
 include(CMakePrintHelpers)
+# cmake_print_variables(CMAKE_CXX_COMPILER_ID)
 
 # get_import_std enable_module_std target_enable_module_std
 include(cmake/cxx_module.cmake)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  # CMake對Clang的import std;支持還在試驗階段
-  # 需要設置此UUID
-  get_import_std(import_std_uuid)
-  cmake_print_variables(import_std_uuid)
+# CMake對Clang的import std;支持還在試驗階段
+# 需要設置此UUID
+get_import_std(import_std_uuid)
+cmake_print_variables(import_std_uuid)
 
-  set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD ${import_std_uuid}
-    CACHE STRING "UUID for import std")
-
-  set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
+set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD ${import_std_uuid}
+  CACHE STRING "UUID for import std")
 
 # 項目名
 project(scope_exit)
+cmake_print_variables(CMAKE_CXX_COMPILER_ID)
 
-include(cmake/cxx_module.cmake)
-
+# 全局啟用標準庫模塊
 enable_module_std(ON)
+cmake_print_variables(CMAKE_CXX_MODULE_STD)
 
 find_package(Catch2 CONFIG REQUIRED)
 

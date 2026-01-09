@@ -211,6 +211,55 @@ TEST_CASE("free_ptr", "[scope_exit]")
     REQUIRE(ptr == nullptr);
 }
 
+TEST_CASE("release", "[scope_exit]")
+{
+    auto value = -1;
+
+    {
+        auto cb = [&] { value = 1; };
+        lite::scope_exit se(lite::make_callback(cb));
+        se.release();
+    }
+    REQUIRE(value == -1);
+}
+
+TEST_CASE("reset", "[scope_exit]")
+{
+    auto value = -1;
+    auto value2 = -1;
+
+    {
+        auto cb = [&] { value = 1; };
+        lite::scope_exit se(lite::make_callback(cb));
+        se.reset();
+        REQUIRE(value == 1);
+    }
+
+    {
+        auto cb = [&]
+        {
+            value = 1;
+            value2 = 1;
+        };
+        auto cb2 = [&] { value = 2; };
+        lite::scope_exit se(lite::make_callback(cb));
+        se.reset(lite::make_callback(cb2));
+    }
+    REQUIRE(value == 2);
+    REQUIRE(value2 == -1);
+}
+
+//TEST_CASE("make_scope_exit", "[scope_exit]")
+//{
+//    auto value = -1;
+//
+//    {
+//        auto cb = [&] { value = 1; };
+//        auto se = lite::make_scope_exit(cb);
+//    }
+//    REQUIRE(value == -1);
+//}
+
 int main(int _argc, char* _argv[])
 {
     auto result = Catch::Session().run(_argc, _argv);

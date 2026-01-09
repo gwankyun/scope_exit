@@ -43,3 +43,11 @@
 #    define CXX_OVERRIDE
 #  endif
 #endif
+
+#ifndef CXX_NOEXCEPT
+#  if CXX_VER >= CXX_11
+#    define CXX_NOEXCEPT noexcept
+#  else
+#    define CXX_NOEXCEPT
+#  endif
+#endif // !CXX_NOEXCEPT

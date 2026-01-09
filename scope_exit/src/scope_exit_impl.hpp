@@ -19,7 +19,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             CB(Fn _f) : f(_f) {}
             ~CB() CXX_OVERRIDE
             {
-                f();
+                if (!release)
+                {
+                    f();
+                }
             }
             Fn f;
         };
@@ -36,7 +39,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             CB(Fn _f, T1 _t1) : f(_f), t1(_t1) {}
             ~CB() CXX_OVERRIDE
             {
-                f(t1);
+                if (!release)
+                {
+                    f(t1);
+                }
             }
             Fn f;
             T1 t1;
@@ -55,7 +61,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             CB(Fn _f, T1 _t1, T2 _t2) : f(_f), t1(_t1), t2(_t2) {}
             ~CB() CXX_OVERRIDE
             {
-                f(t1, t2);
+                if (!release)
+                {
+                    f(t1, t2);
+                }
             }
             Fn f;
             T1 t1;
@@ -77,7 +86,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             }
             ~CB() CXX_OVERRIDE
             {
-                f(t1, t2, t3);
+                if (!release)
+                {
+                    f(t1, t2, t3);
+                }
             }
             Fn f;
             T1 t1;
@@ -101,7 +113,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             }
             ~CB() CXX_OVERRIDE
             {
-                f(t1, t2, t3, t4);
+                if (!release)
+                {
+                    f(t1, t2, t3, t4);
+                }
             }
             Fn f;
             T1 t1;
@@ -127,7 +142,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             }
             ~CB() CXX_OVERRIDE
             {
-                f(t1, t2, t3, t4, t5);
+                if (!release)
+                {
+                    f(t1, t2, t3, t4, t5);
+                }
             }
             Fn f;
             T1 t1;
@@ -154,7 +172,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             }
             ~CB() CXX_OVERRIDE
             {
-                fn(t1, t2, t3, t4, t5, t6);
+                if (!release)
+                {
+                    fn(t1, t2, t3, t4, t5, t6);
+                }
             }
             Fn fn;
             T1 t1;
@@ -183,7 +204,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             }
             ~CB() CXX_OVERRIDE
             {
-                fn(t1, t2, t3, t4, t5, t6, t7);
+                if (!release)
+                {
+                    fn(t1, t2, t3, t4, t5, t6, t7);
+                }
             }
             Fn fn;
             T1 t1;
@@ -214,7 +238,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             }
             ~CB() CXX_OVERRIDE
             {
-                fn(t1, t2, t3, t4, t5, t6, t7, t8);
+                if (!release)
+                {
+                    fn(t1, t2, t3, t4, t5, t6, t7, t8);
+                }
             }
             Fn fn;
             T1 t1;
@@ -247,7 +274,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
             }
             ~CB() CXX_OVERRIDE
             {
-                fn(t1, t2, t3, t4, t5, t6, t7, t8, t9);
+                if (!release)
+                {
+                    fn(t1, t2, t3, t4, t5, t6, t7, t8, t9);
+                }
             }
             Fn fn;
             T1 t1;
@@ -263,4 +293,10 @@ SCOPE_EXIT_MODULE_EXPORT namespace lite
         callback* cb = new CB(_fn, _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9);
         return cb;
     }
+
+    // template <typename Fn, typename... Args>
+    // SCOPE_EXIT_MODULE_INLINE scope_exit make_scope_exit(Fn&& _f, Args&&... args)
+    // {
+    //     return scope_exit(make_callback(_f, std::forward<Args>(args)...));
+    // }
 } // namespace lite

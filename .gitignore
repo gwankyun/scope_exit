@@ -352,3 +352,4 @@ MigrationBackup/
 bin
 build
 conan-build
+vcpkg_installed
